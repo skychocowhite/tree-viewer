@@ -1,0 +1,28 @@
+<div class="main-container">
+    <mat-toolbar class="header">
+        <div class="button-container">
+            <button mat-icon-button (click)="sidenav.toggle()">
+                <mat-icon fontIcon="menu"> </mat-icon>
+            </button>
+        </div>
+
+        <span>Tree Viewer</span>
+
+        <mat-card appearance="outlined" class="file-path">
+            <mat-card-content class="mat-label-large">{{currentFolder}}</mat-card-content>
+        </mat-card>
+    </mat-toolbar>
+
+    <mat-sidenav-container class="sidenav-container">
+        <mat-sidenav #sidenav mode="over" opened="false" class="sidenav">
+            <mat-list>
+                <mat-list-item>
+                    Open Folders
+                </mat-list-item>
+            </mat-list>
+        </mat-sidenav>
+
+        <mat-sidenav-content class="sidenav-content">
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>
