@@ -30,4 +30,8 @@ export class Directory implements FileInterface {
     public getName(): string {
         return this.name;
     }
+
+    public getFileList(): FileInterface[] {
+        return this.fileList;
+    }
 }

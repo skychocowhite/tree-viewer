@@ -8,4 +8,5 @@ export interface FileInterface {
     addFile(file: FileInterface): void;
     getType(): string;
     getName(): string;
+    getFileList(): FileInterface[];
 }
