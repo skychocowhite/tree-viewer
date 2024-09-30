@@ -9,17 +9,22 @@
         <span>Tree Viewer</span>
 
         <mat-card appearance="outlined" class="file-path">
-            <mat-card-content class="mat-label-large">{{currentFolder}}</mat-card-content>
+            <mat-card-content class="mat-body-large">
+                <app-breadcrumb></app-breadcrumb>
+            </mat-card-content>
         </mat-card>
     </mat-toolbar>
 
     <mat-sidenav-container class="sidenav-container">
         <mat-sidenav #sidenav mode="over" opened="false" class="sidenav">
-            <mat-list>
-                <mat-list-item>
+            <mat-action-list>
+                <mat-divider></mat-divider>
+                <button mat-list-item (click)="onOpenFolderClick($event)">
                     Open Folders
-                </mat-list-item>
-            </mat-list>
+                </button>
+                <input type="file" webkitdirectory directory hidden id="fileInput" (change)="onFileSelected($event)">
+                <mat-divider></mat-divider>
+            </mat-action-list>
         </mat-sidenav>
 
         <mat-sidenav-content class="sidenav-content">
