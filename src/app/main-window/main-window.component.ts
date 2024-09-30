@@ -1,20 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
 import { ToolBarService } from '../services/tool-bar.service';
-import { FileService } from '../services/file.service';
+import { DisplayMode, FileService } from '../services/file.service';
 import { BreadcrumbComponent } from "../utils/breadcrumb/breadcrumb.component";
+import { CommonModule } from '@angular/common';
+import { DisplayFolderComponent } from "./display-folder/display-folder.component";
+import { DisplayNoContentComponent } from "./display-no-content/display-no-content.component";
 
 
 @Component({
   selector: 'app-main-window',
   standalone: true,
   imports: [
+    CommonModule,
     MatButtonModule,
     MatCardModule,
     MatDividerModule,
@@ -22,7 +26,9 @@ import { BreadcrumbComponent } from "../utils/breadcrumb/breadcrumb.component";
     MatListModule,
     MatSidenavModule,
     MatToolbarModule,
-    BreadcrumbComponent
+    BreadcrumbComponent,
+    DisplayFolderComponent,
+    DisplayNoContentComponent
   ],
   providers: [
     ToolBarService,
@@ -32,10 +38,20 @@ import { BreadcrumbComponent } from "../utils/breadcrumb/breadcrumb.component";
   styleUrl: './main-window.component.css'
 })
 export class MainWindowComponent implements OnInit {
+  DisplayMode: typeof DisplayMode = DisplayMode;
+  public displayMode: DisplayMode;
+
+  @ViewChild('sidenav') public sidenav!: MatSidenav;
+
   constructor(private fileService: FileService) {
+    this.displayMode = DisplayMode.NO_CONTENT;
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.fileService.getDisplayMode().subscribe((mode: DisplayMode) => {
+      this.displayMode = mode;
+    })
+  }
 
   public onOpenFolderClick(event: Event) {
     let inputElement: HTMLInputElement = document.querySelector("#fileInput") as HTMLInputElement;
@@ -48,6 +64,7 @@ export class MainWindowComponent implements OnInit {
 
     if (inputElement.files) {
       this.fileService.setByFiles(inputElement.files);
+      this.sidenav.toggle();
     }
   }
 }

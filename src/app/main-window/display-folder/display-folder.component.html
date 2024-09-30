@@ -1,0 +1,12 @@
+<div>
+    <mat-action-list>
+        <ng-container *ngFor="let file of getCurFileList()">
+            <mat-divider></mat-divider>
+            <mat-list-item>
+                <mat-icon matListItemIcon>{{file.isDirectory() ? "folder" : "description"}}</mat-icon>
+                <div matListItemTitle>{{file.getName()}}</div>
+            </mat-list-item>
+        </ng-container>
+        <mat-divider></mat-divider>
+    </mat-action-list>
+</div>

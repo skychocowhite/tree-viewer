@@ -28,6 +28,18 @@
         </mat-sidenav>
 
         <mat-sidenav-content class="sidenav-content">
+            <ng-container *ngIf="displayMode === DisplayMode.NO_CONTENT; else folderBlock">
+                <display-no-content></display-no-content>
+            </ng-container>
+
+            <ng-template #folderBlock>
+                <ng-container *ngIf="displayMode === DisplayMode.FOLDER; else treeBlock">
+                    <display-folder></display-folder>
+                </ng-container>
+            </ng-template>
+
+            <ng-template #treeBlock>
+            </ng-template>
         </mat-sidenav-content>
     </mat-sidenav-container>
 </div>
