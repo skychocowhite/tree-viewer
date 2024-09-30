@@ -18,12 +18,11 @@ export class FileService {
     this.displayMode = new BehaviorSubject<DisplayMode>(DisplayMode.NO_CONTENT);
   }
 
-  public setByFiles(files: FileList) {
-    let fileArray: File[] = Array.from(files);
+  public setByFiles(fileArray: File[]) {
     let newFileRoot: FileInterface;
 
     // Set new folder root
-    let filePath: string[] = files[0].webkitRelativePath.split('/');
+    let filePath: string[] = fileArray[0].webkitRelativePath.split('/');
     newFileRoot = new Directory("directory", filePath[0]);
 
     // Set file path
@@ -62,6 +61,22 @@ export class FileService {
     });
 
     return curRoot.getFileList();
+  }
+
+  public openSubFile(subFile: FileInterface) {
+    if (subFile.isDirectory()) {
+      let newFolderPath: string[] = this.curFolderPath.getValue();
+      newFolderPath.push(subFile.getName());
+      this.setCurFolderPath(newFolderPath);
+    }
+  }
+
+  public navFolder(folder: string) {
+    let newFolderPath: string[] = this.curFolderPath.getValue();
+    while (newFolderPath.at(newFolderPath.length - 1) !== folder) {
+      newFolderPath.pop();
+    }
+    this.setCurFolderPath(newFolderPath);
   }
 
   private setCurFolderPath(path: string[]) {

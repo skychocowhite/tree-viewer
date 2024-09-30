@@ -28,6 +28,10 @@ export class BreadcrumbComponent implements OnInit {
       });
     });
   }
+
+  public onItemClick(event: Event, item: MenuItemImpl): void {
+    this.fileService.navFolder(item.getName());
+  }
 }
 
 

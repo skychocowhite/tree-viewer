@@ -25,4 +25,8 @@ export class DisplayFolderComponent {
   public getCurFileList(): FileInterface[] {
     return this.fileService.getCurFileList();
   }
+
+  public onItemClick(event: Event, item: FileInterface): void {
+    this.fileService.openSubFile(item);
+  }
 }

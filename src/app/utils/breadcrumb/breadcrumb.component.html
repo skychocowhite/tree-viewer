@@ -1,7 +1,7 @@
 <div class="flex justify-content-center">
     <p-breadcrumb [model]="items">
         <ng-template pTemplate="item" let-item>
-            <span class="hover-span">{{item.name}}</span>
+            <span class="hover-span" (click)="onItemClick($event, item)" onkeypress="">{{item.name}}</span>
         </ng-template>
         <ng-template pTemplate="separator">
             <span style="padding: 0 0.5vw;"> / </span>

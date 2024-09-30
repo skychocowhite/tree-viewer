@@ -63,7 +63,13 @@ export class MainWindowComponent implements OnInit {
     let inputElement: HTMLInputElement = event.target as HTMLInputElement;
 
     if (inputElement.files) {
-      this.fileService.setByFiles(inputElement.files);
+      let fileArray: File[] = Array.from(inputElement.files);
+
+      fileArray.sort((a: File, b: File) => {
+        return a.webkitRelativePath.localeCompare(b.webkitRelativePath);
+      });
+
+      this.fileService.setByFiles(fileArray);
       this.sidenav.toggle();
     }
   }
