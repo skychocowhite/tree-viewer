@@ -1,28 +1,23 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
+import { DisplayTreeComponent } from "../display-tree/display-tree.component";
 
 @Component({
   selector: 'display-zoom',
   standalone: true,
   imports: [
-    CommonModule
+    CommonModule,
+    DisplayTreeComponent
   ],
   templateUrl: './display-zoom.component.html',
   styleUrl: './display-zoom.component.css'
 })
-export class DisplayZoomComponent implements AfterViewInit {
-  @ViewChild('zoomWrapper') zoomDiv!: ElementRef<HTMLElement>;
-
+export class DisplayZoomComponent {
   public readonly minScale: number = 1;
   public readonly maxScale: number = 100;
   public readonly scaleStep: number = 0.5
 
   public scale: number = 75;
-
-  ngAfterViewInit(): void {
-    console.log(this.zoomDiv.nativeElement);
-    this.zoomDiv.nativeElement.focus();
-  }
 
   private zoomIn(): void {
     if (this.scale + this.scaleStep <= this.maxScale) {
