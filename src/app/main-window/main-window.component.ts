@@ -12,6 +12,7 @@ import { BreadcrumbComponent } from "../utils/breadcrumb/breadcrumb.component";
 import { CommonModule } from '@angular/common';
 import { DisplayFolderComponent } from "./display-folder/display-folder.component";
 import { DisplayNoContentComponent } from "./display-no-content/display-no-content.component";
+import { DisplayZoomComponent } from "./display-zoom/display-zoom.component";
 
 
 @Component({
@@ -28,7 +29,8 @@ import { DisplayNoContentComponent } from "./display-no-content/display-no-conte
     MatToolbarModule,
     BreadcrumbComponent,
     DisplayFolderComponent,
-    DisplayNoContentComponent
+    DisplayNoContentComponent,
+    DisplayZoomComponent
   ],
   providers: [
     ToolBarService,

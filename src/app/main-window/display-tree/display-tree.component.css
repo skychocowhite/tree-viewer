@@ -1,0 +1,6 @@
+.svg-container {
+    max-width: 100%;
+    height: auto;
+    font: 10px sans-serif;
+    user-select: none;
+}

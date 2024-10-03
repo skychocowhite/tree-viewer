@@ -3,6 +3,7 @@ import { FileInterface } from '../files/FileInterface';
 import { ConcreteFile } from '../files/ConcreteFile';
 import { Directory } from '../files/Directory';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { AstTreeService } from './ast-tree.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class FileService {
   private curFolderPath: BehaviorSubject<string[]>;
   private displayMode: BehaviorSubject<DisplayMode>;  // false: folder list, true: tree display mode
 
-  constructor() {
+  constructor(private astTreeService: AstTreeService) {
     this.fileRoot = new Directory("", "");
     this.curFolderPath = new BehaviorSubject<string[]>([]);
     this.displayMode = new BehaviorSubject<DisplayMode>(DisplayMode.NO_CONTENT);
@@ -64,19 +65,31 @@ export class FileService {
   }
 
   public openSubFile(subFile: FileInterface) {
-    if (subFile.isDirectory()) {
-      let newFolderPath: string[] = this.curFolderPath.getValue();
-      newFolderPath.push(subFile.getName());
-      this.setCurFolderPath(newFolderPath);
+    let newFolderPath: string[] = this.curFolderPath.getValue();
+    newFolderPath.push(subFile.getName());
+    this.setCurFolderPath(newFolderPath);
+
+    // Open json file
+    if (subFile.isFile()) {
+      // TODO: add tree component
+      this.astTreeService.createTreeByFile(subFile.getFile());
+      this.setDisplayMode(DisplayMode.TREE);
     }
   }
 
   public navFolder(folder: string) {
+    // Exclude the case for click event on .json file
+    if (folder.includes(".")) {
+      return;
+    }
+
     let newFolderPath: string[] = this.curFolderPath.getValue();
     while (newFolderPath.at(newFolderPath.length - 1) !== folder) {
       newFolderPath.pop();
     }
+
     this.setCurFolderPath(newFolderPath);
+    this.setDisplayMode(DisplayMode.FOLDER);
   }
 
   private setCurFolderPath(path: string[]) {

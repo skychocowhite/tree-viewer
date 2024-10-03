@@ -17,7 +17,7 @@ export class DisplayZoomComponent {
   public readonly maxScale: number = 100;
   public readonly scaleStep: number = 0.5
 
-  public scale: number = 75;
+  public scale: number = 1;
 
   private zoomIn(): void {
     if (this.scale + this.scaleStep <= this.maxScale) {

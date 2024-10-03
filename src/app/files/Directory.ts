@@ -31,6 +31,10 @@ export class Directory implements FileInterface {
         return this.name;
     }
 
+    public getFile(): File {
+        throw Error("'Directory' class does not contain method 'getFile'");
+    }
+
     public getFileList(): FileInterface[] {
         return this.fileList;
     }
