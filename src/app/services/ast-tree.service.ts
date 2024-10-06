@@ -8,7 +8,7 @@ export class AstTreeService {
   private readonly treeRoot: BehaviorSubject<TreeNode>;
 
   constructor() {
-    this.treeRoot = new BehaviorSubject<TreeNode>(new TreeNode(""));
+    this.treeRoot = new BehaviorSubject<TreeNode>(new TreeNode("", ""));
   }
 
   public createTreeByFile(file: File): void {
@@ -19,10 +19,9 @@ export class AstTreeService {
       reader.onload = (ev: ProgressEvent<FileReader>) => {
         try {
           let jsonData: AstJsonObj = JSON.parse(ev.target!.result as string);
-          let newTreeRoot: TreeNode = new TreeNode(jsonData.nodeType);
+          let newTreeRoot: TreeNode = new TreeNode(jsonData.nodeType, jsonData.code);
           this.createTree(jsonData, newTreeRoot);
           this.setTreeRoot(newTreeRoot);
-          console.log(newTreeRoot);
         } catch (err: any) {
           console.error(err);
         }
@@ -34,7 +33,7 @@ export class AstTreeService {
 
   private createTree(jsonData: AstJsonObj, curRoot: TreeNode) {
     jsonData.children.forEach((childData: AstJsonObj) => {
-      curRoot.children.push(new TreeNode(childData.nodeType));
+      curRoot.children.push(new TreeNode(childData.nodeType, childData.code));
       this.createTree(childData, curRoot.children[curRoot.children.length - 1]);
     });
   }
@@ -51,10 +50,12 @@ export class AstTreeService {
 export class TreeNode {
   public name: string;
   public children: TreeNode[];
+  public code: string;
 
-  constructor(name: string) {
+  constructor(name: string, code: string) {
     this.name = name;
     this.children = [];
+    this.code = code;
   }
 }
 

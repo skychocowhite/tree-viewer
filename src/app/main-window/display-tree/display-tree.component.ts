@@ -34,7 +34,7 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit {
   private data: D3TreeNodeWrapper;
 
   constructor(private readonly astTreeService: AstTreeService) {
-    this.data = new D3TreeNodeWrapper(new TreeNode(""));
+    this.data = new D3TreeNodeWrapper(new TreeNode("", ""));
   }
 
   ngOnInit(): void {
@@ -208,14 +208,13 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit {
       .attr("paint-order", "stroke");
 
     // Exit: transition exiting nodesto the parent's new position
-    let nodeExit: d3.Transition<SVGGElement, d3.HierarchyNode<D3TreeNodeWrapper>, SVGGElement, undefined>
-      = node.exit<d3.HierarchyNode<D3TreeNodeWrapper>>()
-        .transition()
-        .duration(250)
-        .remove()
-        .attr("transform", (d: d3.HierarchyNode<D3TreeNodeWrapper>) => `translate(${sourceData.y},${sourceData.x})`)
-        .attr("fill-opacity", 0)
-        .attr("stoke-opacity", 0);
+    node.exit<d3.HierarchyNode<D3TreeNodeWrapper>>()
+      .transition()
+      .duration(250)
+      .remove()
+      .attr("transform", (d: d3.HierarchyNode<D3TreeNodeWrapper>) => `translate(${sourceData.y},${sourceData.x})`)
+      .attr("fill-opacity", 0)
+      .attr("stoke-opacity", 0);
   }
 
   // Update links when data changed
@@ -230,23 +229,21 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit {
         .attr("class", "link")
 
     // Update: transition links to their new position
-    let linkUpdate: d3.Transition<SVGPathElement, d3.HierarchyLink<D3TreeNodeWrapper>, SVGGElement, undefined>
-      = link.merge(linkEnter)
-        .transition()
-        .duration(250)
-        .attr("d", (d: d3.HierarchyLink<D3TreeNodeWrapper>) =>
-          `M${d.source.y},${d.source.x} V${d.target.x! - this.rectHeight / 2} H${d.target.y! - this.getRectWidth(d.target.data.treeNode.name) / 2}`)
-        .attr("fill-opacity", 1)
-        .attr("stroke-width", 5)
-        .attr("stroke-opacity", 1);
+    link.merge(linkEnter)
+      .transition()
+      .duration(250)
+      .attr("d", (d: d3.HierarchyLink<D3TreeNodeWrapper>) =>
+        `M${d.source.y},${d.source.x} V${d.target.x! - this.rectHeight / 2} H${d.target.y! - this.getRectWidth(d.target.data.treeNode.name) / 2}`)
+      .attr("fill-opacity", 1)
+      .attr("stroke-width", 5)
+      .attr("stroke-opacity", 1);
 
     // Exit: transition existing links to the parent's new position
-    let linkExit: d3.Transition<SVGPathElement, d3.HierarchyLink<D3TreeNodeWrapper>, SVGGElement, undefined>
-      = link.exit<d3.HierarchyLink<D3TreeNodeWrapper>>()
-        .transition()
-        .duration(250)
-        .remove()
-        .attr("stroke-opacity", 0);
+    link.exit<d3.HierarchyLink<D3TreeNodeWrapper>>()
+      .transition()
+      .duration(250)
+      .remove()
+      .attr("stroke-opacity", 0);
   }
 
   // Update nodes position
