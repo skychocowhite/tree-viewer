@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { AstTreeService, TreeNode } from '../../services/ast-tree.service';
 import * as d3 from 'd3';
 
@@ -9,8 +9,13 @@ import * as d3 from 'd3';
   templateUrl: './display-tree.component.html',
   styleUrl: './display-tree.component.css'
 })
-export class DisplayTreeComponent implements OnInit, AfterViewInit {
+export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
+  @Input() public scale: number = 1;
+
+  @Output() svgSizeChange: EventEmitter<{ width: number, height: number }> = new EventEmitter();
+
   @ViewChild('treeContainer') private readonly treeContainer!: ElementRef<HTMLElement>;
+
 
   // Tree layout and hierarchy structure
   private hierarchyRoot!: d3.HierarchyNode<D3TreeNodeWrapper>;
@@ -55,13 +60,21 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit {
     this.treeContainer.nativeElement.appendChild(this.svg.node()!);
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.svg && changes['scale']) {
+      this.svg.attr("transform", `scale(${this.scale})`);
+    }
+  }
+
   // Create svg and g containers using d3.Selection
   private createSvg(): void {
     this.svg = d3.create("svg")
       .attr("class", "svg-container")
       .attr("width", this.width)
       .attr("height", this.height)
-      .attr("viewBox", [-this.margin.left, -this.margin.top, this.width, 10]);
+      .attr("viewBox", [-this.margin.left, -this.margin.top, this.width, 10])
+      .attr("transform", `scale(${this.scale})`)
+      .attr("transform-origin", "top left");
 
     this.gLink = this.svg.append("g")
       .attr("class", "gLink")
@@ -121,6 +134,7 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit {
       .attr("width", this.width)
       .attr("viewBox", `-${this.margin.left} ${left.x! - this.rectHeight - this.margin.top} ${this.width} ${this.height}`);
 
+    this.svgSizeChange.emit({ width: this.width, height: this.height });
 
     // ========================
     // ===== Node Section =====

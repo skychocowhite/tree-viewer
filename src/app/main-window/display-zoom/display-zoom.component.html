@@ -1,3 +1,3 @@
-<div #zoomWrapper class="zoom-wrapper" [ngStyle]="{'transform': 'scale(' + scale +')', 'transform-origin': 'top left'}">
-    <display-tree></display-tree>
+<div #zoomWrapper class="zoom-wrapper">
+    <display-tree [scale]="scale" (svgSizeChange)="onSvgSizeChanged($event)"></display-tree>
 </div>

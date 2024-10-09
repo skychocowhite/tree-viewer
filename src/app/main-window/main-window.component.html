@@ -27,7 +27,7 @@
             </mat-action-list>
         </mat-sidenav>
 
-        <mat-sidenav-content class="sidenav-content">
+        <mat-sidenav-content #sidenavContent class="sidenav-content">
             <ng-container *ngIf="displayMode === DisplayMode.NO_CONTENT; else folderBlock">
                 <display-no-content></display-no-content>
             </ng-container>

@@ -1,9 +1,9 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
-import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
+import { MatSidenav, MatSidenavContent, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
 import { ToolBarService } from '../services/tool-bar.service';
@@ -44,6 +44,7 @@ export class MainWindowComponent implements OnInit {
   public displayMode: DisplayMode;
 
   @ViewChild('sidenav') public sidenav!: MatSidenav;
+  @ViewChild('sidenavContent') public sidenavContainer!: MatSidenavContent;
 
   constructor(private fileService: FileService) {
     this.displayMode = DisplayMode.NO_CONTENT;
@@ -73,6 +74,13 @@ export class MainWindowComponent implements OnInit {
 
       this.fileService.setByFiles(fileArray);
       this.sidenav.toggle();
+    }
+  }
+
+  @HostListener('wheel', ['$event'])
+  public onScroll(event: WheelEvent) {
+    if (event.ctrlKey) {
+      event.preventDefault();
     }
   }
 }
