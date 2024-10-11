@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -39,12 +39,15 @@ import { DisplayZoomComponent } from "./display-zoom/display-zoom.component";
   templateUrl: './main-window.component.html',
   styleUrl: './main-window.component.css'
 })
-export class MainWindowComponent implements OnInit {
+export class MainWindowComponent implements OnInit, AfterViewInit {
   DisplayMode: typeof DisplayMode = DisplayMode;
   public displayMode: DisplayMode;
 
+  public sidenavContentOriginWidth!: number;
+  public sidenavContentOriginHeight!: number;
+
   @ViewChild('sidenav') public sidenav!: MatSidenav;
-  @ViewChild('sidenavContent') public sidenavContainer!: MatSidenavContent;
+  @ViewChild('sidenavContent') public sidenavContent!: MatSidenavContent;
 
   constructor(private fileService: FileService) {
     this.displayMode = DisplayMode.NO_CONTENT;
@@ -54,6 +57,11 @@ export class MainWindowComponent implements OnInit {
     this.fileService.getDisplayMode().subscribe((mode: DisplayMode) => {
       this.displayMode = mode;
     })
+  }
+
+  ngAfterViewInit(): void {
+    this.sidenavContentOriginWidth = this.sidenavContent.getElementRef().nativeElement.scrollWidth;
+    this.sidenavContentOriginHeight = this.sidenavContent.getElementRef().nativeElement.scrollHeight;
   }
 
   public onOpenFolderClick(event: Event) {

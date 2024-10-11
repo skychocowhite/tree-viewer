@@ -39,7 +39,8 @@
             </ng-template>
 
             <ng-template #treeBlock>
-                <display-zoom></display-zoom>
+                <display-zoom [parentHeight]="sidenavContentOriginHeight"
+                    [parentWidth]="sidenavContentOriginWidth"></display-zoom>
             </ng-template>
         </mat-sidenav-content>
     </mat-sidenav-container>

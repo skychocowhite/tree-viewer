@@ -14,7 +14,7 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
 
   @Output() svgSizeChange: EventEmitter<{ width: number, height: number }> = new EventEmitter();
 
-  @ViewChild('treeContainer') private readonly treeContainer!: ElementRef<HTMLElement>;
+  @ViewChild('treeContainer') private readonly treeContainer!: ElementRef<HTMLDivElement>;
 
 
   // Tree layout and hierarchy structure
@@ -60,6 +60,7 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
     this.treeContainer.nativeElement.appendChild(this.svg.node()!);
   }
 
+  // Rescale SVG container depending on scale
   ngOnChanges(changes: SimpleChanges): void {
     if (this.svg && changes['scale']) {
       this.svg.attr("transform", `scale(${this.scale})`);

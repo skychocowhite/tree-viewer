@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, HostListener, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
 import { DisplayTreeComponent } from "../display-tree/display-tree.component";
 
 @Component({
@@ -13,11 +13,8 @@ import { DisplayTreeComponent } from "../display-tree/display-tree.component";
   styleUrl: './display-zoom.component.css'
 })
 export class DisplayZoomComponent {
-  @Output() svgSizeChange: EventEmitter<{
-    width: number,
-    height: number,
-    scale: number
-  }> = new EventEmitter();
+  @Input() public parentHeight!: number;
+  @Input() public parentWidth!: number;
 
   @ViewChild('zoomWrapper') public zoomWrapper!: ElementRef<HTMLDivElement>;
 
@@ -29,7 +26,7 @@ export class DisplayZoomComponent {
   public svgHeight: number = 0;
   public scale: number = 1;
 
-  constructor(private readonly cdr: ChangeDetectorRef) { }
+  constructor() { }
 
   private zoomIn(): void {
     if (this.scale + this.scaleStep <= this.maxScale) {
@@ -53,8 +50,17 @@ export class DisplayZoomComponent {
 
   public changeScrollBar(): void {
     if (this.zoomWrapper) {
-      this.zoomWrapper.nativeElement.style.height = this.svgHeight * this.scale + 'px';
-      this.zoomWrapper.nativeElement.style.width = this.svgWidth * this.scale + 'px';
+      if (this.parentHeight >= this.svgHeight * this.scale) {
+        this.zoomWrapper.nativeElement.style.height = this.parentHeight + 'px';
+      } else {
+        this.zoomWrapper.nativeElement.style.height = this.svgHeight * this.scale + 'px';
+      }
+
+      if (this.parentWidth >= this.svgWidth * this.scale) {
+        this.zoomWrapper.nativeElement.style.width = this.parentWidth + 'px';
+      } else {
+        this.zoomWrapper.nativeElement.style.width = this.svgWidth * this.scale + 'px';
+      }
     }
   }
 
