@@ -6,8 +6,8 @@ import { MatListModule } from '@angular/material/list';
 import { MatSidenav, MatSidenavContent, MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatDividerModule } from '@angular/material/divider';
-import { ToolBarService } from '../services/tool-bar.service';
-import { DisplayMode, FileService } from '../services/file.service';
+import { ToolBarService } from '../../services/tool-bar.service';
+import { DisplayMode, FileService } from '../../services/file.service';
 import { BreadcrumbComponent } from "../utils/breadcrumb/breadcrumb.component";
 import { CommonModule } from '@angular/common';
 import { DisplayFolderComponent } from "./display-folder/display-folder.component";
@@ -30,7 +30,7 @@ import { DisplayZoomComponent } from "./display-zoom/display-zoom.component";
     BreadcrumbComponent,
     DisplayFolderComponent,
     DisplayNoContentComponent,
-    DisplayZoomComponent
+    DisplayZoomComponent,
   ],
   providers: [
     ToolBarService,
@@ -40,17 +40,25 @@ import { DisplayZoomComponent } from "./display-zoom/display-zoom.component";
   styleUrl: './main-window.component.css'
 })
 export class MainWindowComponent implements OnInit, AfterViewInit {
+  // Current mode of display, decide which component to show
   DisplayMode: typeof DisplayMode = DisplayMode;
   public displayMode: DisplayMode;
 
+  // Side bar navigation component
   public sidenavContentOriginWidth!: number;
   public sidenavContentOriginHeight!: number;
 
   @ViewChild('sidenav') public sidenav!: MatSidenav;
   @ViewChild('sidenavContent') public sidenavContent!: MatSidenavContent;
 
-  constructor(private fileService: FileService) {
+  // Ast side bar container
+  public astSidebarToggle: boolean;
+
+  constructor(
+    private readonly fileService: FileService
+  ) {
     this.displayMode = DisplayMode.NO_CONTENT;
+    this.astSidebarToggle = false;
   }
 
   ngOnInit(): void {
@@ -83,6 +91,10 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
       this.fileService.setByFiles(fileArray);
       this.sidenav.toggle();
     }
+  }
+
+  public onAstSidebarToggle(): void {
+    this.astSidebarToggle = !this.astSidebarToggle;
   }
 
   @HostListener('wheel', ['$event'])

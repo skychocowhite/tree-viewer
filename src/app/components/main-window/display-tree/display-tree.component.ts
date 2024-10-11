@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { AstTreeService, TreeNode } from '../../services/ast-tree.service';
+import { AstTreeService, TreeNode } from '../../../services/ast-tree.service';
 import * as d3 from 'd3';
 
 @Component({

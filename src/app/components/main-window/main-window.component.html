@@ -13,6 +13,20 @@
                 <app-breadcrumb></app-breadcrumb>
             </mat-card-content>
         </mat-card>
+
+        <div class="button-container">
+            <ng-container *ngIf="!astSidebarToggle">
+                <button mat-icon-button (click)="onAstSidebarToggle()">
+                    <mat-icon svgIcon="left_panel_open"></mat-icon>
+                </button>
+            </ng-container>
+
+            <ng-container *ngIf="astSidebarToggle">
+                <button mat-icon-button (click)="onAstSidebarToggle()">
+                    <mat-icon svgIcon="close_square"></mat-icon>
+                </button>
+            </ng-container>
+        </div>
     </mat-toolbar>
 
     <mat-sidenav-container class="sidenav-container">

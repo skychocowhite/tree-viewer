@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 
 import { BreadcrumbModule } from 'primeng/breadcrumb';
-import { FileService } from '../../services/file.service';
+import { FileService } from '../../../services/file.service';
 
 @Component({
   selector: 'app-breadcrumb',
@@ -16,7 +16,7 @@ import { FileService } from '../../services/file.service';
 export class BreadcrumbComponent implements OnInit {
   public items: MenuItemImpl[];
 
-  constructor(private fileService: FileService) {
+  constructor(private readonly fileService: FileService) {
     this.items = [];
   }
 
@@ -36,7 +36,7 @@ export class BreadcrumbComponent implements OnInit {
 
 
 export class MenuItemImpl implements MenuItem {
-  private name: string;
+  private readonly name: string;
 
   constructor(name: string) {
     this.name = name;
