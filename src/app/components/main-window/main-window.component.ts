@@ -13,6 +13,7 @@ import { CommonModule } from '@angular/common';
 import { DisplayFolderComponent } from "./display-folder/display-folder.component";
 import { DisplayNoContentComponent } from "./display-no-content/display-no-content.component";
 import { DisplayZoomComponent } from "./display-zoom/display-zoom.component";
+import { AstSideBarComponent } from "./ast-side-bar/ast-side-bar.component";
 
 
 @Component({
@@ -31,6 +32,7 @@ import { DisplayZoomComponent } from "./display-zoom/display-zoom.component";
     DisplayFolderComponent,
     DisplayNoContentComponent,
     DisplayZoomComponent,
+    AstSideBarComponent
   ],
   providers: [
     ToolBarService,
@@ -64,6 +66,10 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.fileService.getDisplayMode().subscribe((mode: DisplayMode) => {
       this.displayMode = mode;
+
+      if (this.displayMode !== DisplayMode.TREE) {
+        this.astSidebarToggle = false;
+      }
     })
   }
 
@@ -102,5 +108,10 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
     if (event.ctrlKey) {
       event.preventDefault();
     }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  public onResizeWindow(event: UIEvent) {
+    this.sidenavContentOriginWidth = window.innerWidth;
   }
 }

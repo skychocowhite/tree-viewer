@@ -16,7 +16,7 @@
 
         <div class="button-container">
             <ng-container *ngIf="!astSidebarToggle">
-                <button mat-icon-button (click)="onAstSidebarToggle()">
+                <button mat-icon-button (click)="onAstSidebarToggle()" [disabled]="displayMode !== DisplayMode.TREE">
                     <mat-icon svgIcon="left_panel_open"></mat-icon>
                 </button>
             </ng-container>
@@ -41,7 +41,11 @@
             </mat-action-list>
         </mat-sidenav>
 
-        <mat-sidenav-content #sidenavContent class="sidenav-content">
+        <mat-sidenav-content #sidenavContent class="sidenav-content" [ngClass]="{
+            'no-content-mode': displayMode === DisplayMode.NO_CONTENT,
+            'folder-mode': displayMode === DisplayMode.FOLDER,
+            'tree-mode': displayMode === DisplayMode.TREE
+        }">
             <ng-container *ngIf="displayMode === DisplayMode.NO_CONTENT; else folderBlock">
                 <display-no-content></display-no-content>
             </ng-container>
@@ -54,8 +58,15 @@
 
             <ng-template #treeBlock>
                 <display-zoom [parentHeight]="sidenavContentOriginHeight"
-                    [parentWidth]="sidenavContentOriginWidth"></display-zoom>
+                    [parentWidth]="astSidebarToggle ? sidenavContentOriginWidth * (2/3) : sidenavContentOriginWidth"></display-zoom>
+
+                <ng-container *ngIf="astSidebarToggle">
+                    <ast-side-bar [parentHeight]="sidenavContentOriginHeight"
+                        [parentWidth]="sidenavContentOriginWidth * (1/3) - 20"></ast-side-bar>
+                </ng-container>
             </ng-template>
+
         </mat-sidenav-content>
     </mat-sidenav-container>
+
 </div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, HostListener, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { DisplayTreeComponent } from "../display-tree/display-tree.component";
 
 @Component({
@@ -12,11 +12,12 @@ import { DisplayTreeComponent } from "../display-tree/display-tree.component";
   templateUrl: './display-zoom.component.html',
   styleUrl: './display-zoom.component.css'
 })
-export class DisplayZoomComponent {
+export class DisplayZoomComponent implements OnChanges {
   @Input() public parentHeight!: number;
   @Input() public parentWidth!: number;
 
   @ViewChild('zoomWrapper') public zoomWrapper!: ElementRef<HTMLDivElement>;
+  @ViewChild(DisplayTreeComponent) public treeComponent!: DisplayTreeComponent;
 
   public readonly minScale: number = 0.1;
   public readonly maxScale: number = 3;
@@ -26,7 +27,13 @@ export class DisplayZoomComponent {
   public svgHeight: number = 0;
   public scale: number = 1;
 
-  constructor() { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['parentWidth']) {
+      this.parentWidth = changes['parentWidth'].currentValue;
+      this.changeScrollBar();
+    }
+  }
 
   private zoomIn(): void {
     if (this.scale + this.scaleStep <= this.maxScale) {
@@ -50,16 +57,21 @@ export class DisplayZoomComponent {
 
   public changeScrollBar(): void {
     if (this.zoomWrapper) {
+      let treeContainer: ElementRef<HTMLDivElement> = this.treeComponent.getTreeContainer();
+
+      this.zoomWrapper.nativeElement.style.height = this.parentHeight + 'px';
+      this.zoomWrapper.nativeElement.style.width = this.parentWidth + 'px';
+
       if (this.parentHeight >= this.svgHeight * this.scale) {
-        this.zoomWrapper.nativeElement.style.height = this.parentHeight + 'px';
+        treeContainer.nativeElement.style.height = this.parentHeight + 'px';
       } else {
-        this.zoomWrapper.nativeElement.style.height = this.svgHeight * this.scale + 'px';
+        treeContainer.nativeElement.style.height = this.svgHeight * this.scale + 'px';
       }
 
       if (this.parentWidth >= this.svgWidth * this.scale) {
-        this.zoomWrapper.nativeElement.style.width = this.parentWidth + 'px';
+        treeContainer.nativeElement.style.width = this.parentWidth + 'px';
       } else {
-        this.zoomWrapper.nativeElement.style.width = this.svgWidth * this.scale + 'px';
+        treeContainer.nativeElement.style.width = this.svgWidth * this.scale + 'px';
       }
     }
   }

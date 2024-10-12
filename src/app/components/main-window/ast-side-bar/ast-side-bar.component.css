@@ -1,0 +1,15 @@
+.ast-sidebar-container {
+    height: 100%;
+    color: white;
+    background-color: #3a3a3a;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.code-container {
+    border: solid 1px gray;
+    border-radius: 5px;
+    width: 100%;
+}

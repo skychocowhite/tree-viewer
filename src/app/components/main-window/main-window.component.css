@@ -1,3 +1,7 @@
+.header {
+    background-color: lightskyblue;
+}
+
 .main-container {
     height: 100%;
     display: flex;
@@ -14,4 +18,13 @@
     margin: 0.5vw;
     border-radius: 50px;
     justify-content: center;
+}
+
+*:disabled {
+    opacity: 0.2;
+}
+
+.sidenav-content.tree-mode {
+    overflow: hidden;
+    display: flex;
 }

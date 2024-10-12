@@ -286,6 +286,10 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
     const metrics: TextMetrics = context.measureText(text);
     return metrics.width + 30;
   }
+
+  public getTreeContainer(): ElementRef<HTMLDivElement> {
+    return this.treeContainer;
+  }
 }
 
 
