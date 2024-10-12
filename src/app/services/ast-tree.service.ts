@@ -10,8 +10,8 @@ export class AstTreeService {
   private readonly optionList: BehaviorSubject<OptionList>;
 
   constructor() {
-    this.treeRoot = new BehaviorSubject<TreeNode>(new TreeNode("", ""));
-    this.curRoot = new BehaviorSubject<TreeNode>(new TreeNode("", ""));
+    this.treeRoot = new BehaviorSubject<TreeNode>(new TreeNode());
+    this.curRoot = new BehaviorSubject<TreeNode>(new TreeNode());
 
     this.optionList = new BehaviorSubject<OptionList>(new OptionList());
     this.optionList.getValue().addOption('suspendOpenClose');
@@ -25,7 +25,10 @@ export class AstTreeService {
       reader.onload = (ev: ProgressEvent<FileReader>) => {
         try {
           let jsonData: AstJsonObj = JSON.parse(ev.target!.result as string);
-          let newTreeRoot: TreeNode = new TreeNode(jsonData.nodeType, jsonData.code);
+          let newTreeRoot: TreeNode = new TreeNode()
+            .setId(jsonData.id)
+            .setName(jsonData.nodeType)
+            .setCode(jsonData.code);
           this.createTree(jsonData, newTreeRoot);
           this.setTreeRoot(newTreeRoot);
           this.setCurRoot(newTreeRoot);
@@ -35,12 +38,16 @@ export class AstTreeService {
       };
       reader.readAsText(file);
     }
-
   }
 
   private createTree(jsonData: AstJsonObj, curRoot: TreeNode) {
     jsonData.children.forEach((childData: AstJsonObj) => {
-      curRoot.children.push(new TreeNode(childData.nodeType, childData.code));
+      curRoot.children.push(
+        new TreeNode()
+          .setId(childData.id)
+          .setName(childData.nodeType)
+          .setCode(childData.code)
+      );
       this.createTree(childData, curRoot.children[curRoot.children.length - 1]);
     });
   }
@@ -51,6 +58,10 @@ export class AstTreeService {
 
   public getCurRoot(): Observable<TreeNode> {
     return this.curRoot.asObservable();
+  }
+
+  public getCurRootActualValue(): TreeNode {
+    return this.curRoot.getValue();
   }
 
   public getOptionList(): Observable<OptionList> {
@@ -71,14 +82,31 @@ export class AstTreeService {
 }
 
 export class TreeNode {
+  public id: string;
   public name: string;
   public children: TreeNode[];
   public code: string;
 
-  constructor(name: string, code: string) {
-    this.name = name;
+  constructor() {
+    this.id = "";
+    this.name = "";
     this.children = [];
+    this.code = "";
+  }
+
+  public setId(id: string): this {
+    this.id = id;
+    return this;
+  }
+
+  public setName(name: string): this {
+    this.name = name;
+    return this;
+  }
+
+  public setCode(code: string): this {
     this.code = code;
+    return this;
   }
 }
 
@@ -102,6 +130,7 @@ export class OptionList {
 }
 
 interface AstJsonObj {
+  id: string;
   nodeType: string;
   code: string;
   children: AstJsonObj[];

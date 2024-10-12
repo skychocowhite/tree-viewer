@@ -37,11 +37,10 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
 
   // AST tree data
   private data: D3TreeNodeWrapper;
-
   private optionList: OptionList;
 
   constructor(private readonly astTreeService: AstTreeService) {
-    this.data = new D3TreeNodeWrapper(new TreeNode("", ""));
+    this.data = new D3TreeNodeWrapper(new TreeNode());
     this.optionList = new OptionList();
   }
 
@@ -54,6 +53,10 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
     this.astTreeService.getTreeRoot().subscribe((treeNode: TreeNode) => {
       this.data = new D3TreeNodeWrapper(treeNode);
       this.createTree();
+      this.update(null, this.hierarchyRoot);
+    });
+
+    this.astTreeService.getCurRoot().subscribe((curRoot: TreeNode) => {
       this.update(null, this.hierarchyRoot);
     });
 
@@ -190,7 +193,6 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
         .attr("transform", (d: d3.HierarchyNode<D3TreeNodeWrapper>) => `translate(${sourceData.data.preY},${sourceData.data.preX})`)
         .on("click", (event: MouseEvent, d: d3.HierarchyNode<D3TreeNodeWrapper>) => {
           this.astTreeService.setCurRoot(d.data.treeNode);
-
           if (!this.optionList.options['suspendOpenClose']) {
             d.data.isOpen = d.data.hierarchyChildren ? !d.data.isOpen : false;
             d.children = d.data.isOpen ? d.data.hierarchyChildren : undefined;
@@ -218,7 +220,12 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
       .attr("rx", 18)
       .attr("fill", "white")
       .attr("fill-opacity", 1)
-      .attr("stroke", (d: d3.HierarchyNode<D3TreeNodeWrapper>) => d.data.hierarchyChildren ? "#555" : "#999")
+      .attr("stroke", (d: d3.HierarchyNode<D3TreeNodeWrapper>) => {
+        if (d.data.treeNode.id === this.astTreeService.getCurRootActualValue().id) {
+          return "#39FF14";
+        }
+        return d.data.hierarchyChildren ? "#555" : "#999"
+      })
       .attr("stroke-width", 2);
 
     nodeUpdate.select("text")

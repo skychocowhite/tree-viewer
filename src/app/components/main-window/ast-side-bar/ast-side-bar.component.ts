@@ -1,7 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { AstTreeService, OptionList, TreeNode } from '../../../services/ast-tree.service';
-import prettier from 'prettier';
-import prettierPluginJava from 'prettier-plugin-java';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
@@ -26,7 +24,7 @@ export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges {
   constructor(
     private readonly astTreeService: AstTreeService
   ) {
-    this.curRoot = new TreeNode("", "");
+    this.curRoot = new TreeNode();
     this.optionList = new OptionList();
   }
 
@@ -60,40 +58,18 @@ export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges {
   private insertCode(): void {
     if (this.code) {
       this.code.nativeElement.innerHTML = "";
-      prettier.format(this.curRoot.code, {
-        parser: "java",
-        tabWidth: 2,
-        plugins: [prettierPluginJava]
-      })
-        .then((code: string) => {
-          code.split("\n").forEach((line: string) => {
-            let divElement: HTMLDivElement = document.createElement("div");
-            let spanElement: HTMLSpanElement = document.createElement("span");
+      this.curRoot.code.split('\n').forEach((line: string) => {
+        let divElement: HTMLDivElement = document.createElement("div");
+        let spanElement: HTMLSpanElement = document.createElement("span");
 
-            divElement.classList.add("code-line-block");
-            spanElement.classList.add("code-line");
-            spanElement.innerHTML = " ";
-            spanElement.innerHTML += line;
+        divElement.classList.add("code-line-block");
+        spanElement.classList.add("code-line");
+        spanElement.innerHTML = " ";
+        spanElement.innerHTML += line;
 
-            divElement.appendChild(spanElement);
-            this.code.nativeElement.appendChild(divElement);
-          })
-        })
-        .catch((error: Error) => {
-          if (error.message.includes("parsing errors")) {
-            let divElement: HTMLDivElement = document.createElement("div");
-            let spanElement: HTMLSpanElement = document.createElement("span");
-
-            divElement.classList.add("code-line-block");
-            spanElement.classList.add("code-line");
-            spanElement.innerHTML = " ";
-            spanElement.innerHTML += this.curRoot.code;
-
-            divElement.appendChild(spanElement);
-            this.code.nativeElement.appendChild(divElement);
-          }
-        });
-
+        divElement.appendChild(spanElement);
+        this.code.nativeElement.appendChild(divElement);
+      });
     }
   }
 
