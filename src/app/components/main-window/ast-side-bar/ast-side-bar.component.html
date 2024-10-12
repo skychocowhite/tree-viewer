@@ -1,5 +1,12 @@
 <div #astSidebar class="ast-sidebar-container">
-    <div class="code-container">
-        AAA
+    <div #codeContainer class="code-container">
+        <div #code class="code-line-list"></div>
+    </div>
+
+    <div class="checkbox-container">
+        <div class="checkbox-item" (click)="toggleSuspendOpenClose($event)">
+            <mat-checkbox id="suspend-open-close" [checked]="optionList.options['suspendOpenClose']">Suspend open or
+                close</mat-checkbox>
+        </div>
     </div>
 </div>

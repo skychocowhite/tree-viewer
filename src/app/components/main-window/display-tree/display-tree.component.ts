@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { AstTreeService, TreeNode } from '../../../services/ast-tree.service';
+import { AstTreeService, OptionList, TreeNode } from '../../../services/ast-tree.service';
 import * as d3 from 'd3';
 
 @Component({
@@ -38,8 +38,11 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
   // AST tree data
   private data: D3TreeNodeWrapper;
 
+  private optionList: OptionList;
+
   constructor(private readonly astTreeService: AstTreeService) {
     this.data = new D3TreeNodeWrapper(new TreeNode("", ""));
+    this.optionList = new OptionList();
   }
 
   ngOnInit(): void {
@@ -52,6 +55,10 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
       this.data = new D3TreeNodeWrapper(treeNode);
       this.createTree();
       this.update(null, this.hierarchyRoot);
+    });
+
+    this.astTreeService.getOptionList().subscribe((optionList: OptionList) => {
+      this.optionList = optionList;
     });
   }
 
@@ -182,9 +189,13 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
         .attr("class", "node")
         .attr("transform", (d: d3.HierarchyNode<D3TreeNodeWrapper>) => `translate(${sourceData.data.preY},${sourceData.data.preX})`)
         .on("click", (event: MouseEvent, d: d3.HierarchyNode<D3TreeNodeWrapper>) => {
-          d.data.isOpen = d.data.hierarchyChildren ? !d.data.isOpen : false;
-          d.children = d.data.isOpen ? d.data.hierarchyChildren : undefined;
-          this.update(event, d);
+          this.astTreeService.setCurRoot(d.data.treeNode);
+
+          if (!this.optionList.options['suspendOpenClose']) {
+            d.data.isOpen = d.data.hierarchyChildren ? !d.data.isOpen : false;
+            d.children = d.data.isOpen ? d.data.hierarchyChildren : undefined;
+            this.update(event, d);
+          }
         });
 
     nodeEnter.append("rect")
