@@ -50,6 +50,10 @@ export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (this.astSidebar && changes['parentHeight']) {
+      this.astSidebar.nativeElement.style.height = this.parentHeight + 'px';
+    }
+
     if (this.astSidebar && changes['parentWidth']) {
       this.astSidebar.nativeElement.style.width = this.parentWidth + 'px';
     }

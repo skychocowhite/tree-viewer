@@ -1,9 +1,4 @@
 .hover-span {
     cursor: pointer;
-    transition: 0.2s;
-    font-weight: bold;
-}
-
-.hover-span:hover {
-    color: blue;
+    transition: 90ms;
 }

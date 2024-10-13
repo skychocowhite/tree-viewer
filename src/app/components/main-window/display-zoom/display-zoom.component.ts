@@ -33,6 +33,11 @@ export class DisplayZoomComponent implements OnChanges {
       this.parentWidth = changes['parentWidth'].currentValue;
       this.changeScrollBar();
     }
+
+    if (changes['parentHeight']) {
+      this.parentHeight = changes['parentHeight'].currentValue;
+      this.changeScrollBar();
+    }
   }
 
   private zoomIn(): void {

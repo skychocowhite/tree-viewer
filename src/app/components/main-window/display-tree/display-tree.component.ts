@@ -218,13 +218,13 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
       .attr("x", (d) => -(this.getRectWidth(d.data.treeNode.name) / 2))
       .attr("y", -this.rectHeight)
       .attr("rx", 18)
-      .attr("fill", "white")
+      .attr("fill", "#484f58")
       .attr("fill-opacity", 1)
       .attr("stroke", (d: d3.HierarchyNode<D3TreeNodeWrapper>) => {
         if (d.data.treeNode.id === this.astTreeService.getCurRootActualValue().id) {
           return "#39FF14";
         }
-        return d.data.hierarchyChildren ? "#555" : "#999"
+        return "#555";
       })
       .attr("stroke-width", 2);
 
@@ -234,10 +234,9 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
       .attr("font-size", "15px")
       .attr("y", -this.rectHeight / 2)
       .attr("dy", "0.31em")
+      .attr("fill", "white")
       .attr("text-anchor", "middle")
       .attr("stroke-linejoin", "round")
-      .attr("stroke-width", 3)
-      .attr("stroke", "white")
       .attr("paint-order", "stroke");
 
     // Exit: transition exiting nodesto the parent's new position
@@ -268,6 +267,7 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
       .attr("d", (d: d3.HierarchyLink<D3TreeNodeWrapper>) =>
         `M${d.source.y},${d.source.x} V${d.target.x! - this.rectHeight / 2} H${d.target.y! - this.getRectWidth(d.target.data.treeNode.name) / 2}`)
       .attr("fill-opacity", 1)
+      .attr("stroke", '#8b949e')
       .attr("stroke-width", 5)
       .attr("stroke-opacity", 1);
 

@@ -32,12 +32,10 @@
     <mat-sidenav-container class="sidenav-container">
         <mat-sidenav #sidenav mode="over" opened="false" class="sidenav">
             <mat-action-list>
-                <mat-divider></mat-divider>
                 <button mat-list-item (click)="onOpenFolderClick($event)">
-                    Open Folders
+                    Open Folder
                 </button>
                 <input type="file" webkitdirectory directory hidden id="fileInput" (change)="onFileSelected($event)">
-                <mat-divider></mat-divider>
             </mat-action-list>
         </mat-sidenav>
 

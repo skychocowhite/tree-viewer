@@ -6,6 +6,7 @@
     width: 100%;
     height: 100%;
     text-align: center;
+    background-color: #21262d;
 }
 
 .no-content-icon {
@@ -13,4 +14,9 @@
     height: auto;
     width: auto;
     font-size: 10vw;
+    color: white;
+}
+
+h2 {
+    color: white;
 }

@@ -113,5 +113,6 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   @HostListener('window:resize', ['$event'])
   public onResizeWindow(event: UIEvent) {
     this.sidenavContentOriginWidth = window.innerWidth;
+    this.sidenavContentOriginHeight = window.innerHeight;
   }
 }

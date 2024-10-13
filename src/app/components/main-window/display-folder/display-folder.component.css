@@ -1,0 +1,22 @@
+.folder-list-container {
+    height: auto;
+    background-color: #21262d;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.folder-list-container mat-list-item {
+    border-radius: 5px;
+}
+
+.folder-list-container mat-list-item:hover {
+    background-color: #6e7681;
+}
+
+.folder-list-container mat-icon {
+    color: white;
+}
+
+.folder-list-container div {
+    color: white;
+}
