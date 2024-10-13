@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, viewChild, ViewChild } from '@angular/core';
 import { AstOption, AstTreeService, OptionList, TreeNode } from '../../../services/ast-tree.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
@@ -17,6 +17,7 @@ export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges {
 
   @ViewChild('astSidebar') public astSidebar!: ElementRef<HTMLDivElement>;
   @ViewChild('code') public code!: ElementRef<HTMLDivElement>;
+  @ViewChild('codeNumber') public codeNumber!: ElementRef<HTMLDivElement>;
 
   AstOption: typeof AstOption = AstOption;
   public curRoot: TreeNode;
@@ -63,7 +64,9 @@ export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges {
   private insertCode(): void {
     if (this.code) {
       this.code.nativeElement.innerHTML = "";
-      this.curRoot.code.split('\n').forEach((line: string) => {
+      this.codeNumber.nativeElement.innerHTML = "";
+
+      this.curRoot.code.split('\n').forEach((line: string, lineIndex: number) => {
         let divElement: HTMLDivElement = document.createElement("div");
         let spanElement: HTMLSpanElement = document.createElement("span");
 
@@ -74,6 +77,21 @@ export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges {
 
         divElement.appendChild(spanElement);
         this.code.nativeElement.appendChild(divElement);
+
+        divElement = document.createElement("div");
+        spanElement = document.createElement("span");
+
+        divElement.classList.add("code-line-number-block");
+        spanElement.classList.add("code-line-number");
+
+        let numberStr: string = (lineIndex + 1).toString();
+        for (let i: number = 4 - numberStr.length; i > 0; --i) {
+          spanElement.innerHTML += " ";
+        }
+        spanElement.innerHTML += numberStr;
+
+        divElement.appendChild(spanElement);
+        this.codeNumber.nativeElement.appendChild(divElement);
       });
     }
   }
