@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
-import { AstTreeService, OptionList, TreeNode } from '../../../services/ast-tree.service';
+import { AstOption, AstTreeService, OptionList, TreeNode } from '../../../services/ast-tree.service';
 import * as d3 from 'd3';
 
 @Component({
@@ -62,6 +62,12 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
 
     this.astTreeService.getOptionList().subscribe((optionList: OptionList) => {
       this.optionList = optionList;
+
+      if (optionList.options[AstOption.ALWAYS_OPEN]) {
+        this.setAlwaysOpen(this.hierarchyRoot);
+      }
+
+      this.update(null, this.hierarchyRoot);
     });
   }
 
@@ -74,6 +80,14 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (this.svg && changes['scale']) {
       this.svg.attr("transform", `scale(${this.scale})`);
+    }
+  }
+
+  private setAlwaysOpen(node: d3.HierarchyNode<D3TreeNodeWrapper>): void {
+    node.data.isOpen = node.data.hierarchyChildren ? true : false;
+    node.children = node.data.hierarchyChildren;
+    if (node.children) {
+      node.children.forEach((d) => this.setAlwaysOpen(d));
     }
   }
 
@@ -128,7 +142,7 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
     // Resize SVG size
     let left: d3.HierarchyNode<D3TreeNodeWrapper> = this.hierarchyRoot;
     let right: d3.HierarchyNode<D3TreeNodeWrapper> = this.hierarchyRoot;
-    this.hierarchyRoot.eachBefore((node: d3.HierarchyNode<D3TreeNodeWrapper>) => {
+    nodes.forEach((node: d3.HierarchyNode<D3TreeNodeWrapper>) => {
       if (node.x! < left.x!) {
         left = node;
       }
@@ -190,10 +204,15 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
     let nodeEnter: d3.Selection<SVGGElement, d3.HierarchyNode<D3TreeNodeWrapper>, SVGGElement, undefined>
       = node.enter().append("g")
         .attr("class", "node")
-        .attr("transform", (d: d3.HierarchyNode<D3TreeNodeWrapper>) => `translate(${sourceData.data.preY},${sourceData.data.preX})`)
+        .attr("transform", (d: d3.HierarchyNode<D3TreeNodeWrapper>) => {
+          if (d.parent) {
+            return `translate(${d.parent.data.preY},${d.parent.data.preX})`;
+          }
+          return `translate(0, 0)`;
+        })
         .on("click", (event: MouseEvent, d: d3.HierarchyNode<D3TreeNodeWrapper>) => {
           this.astTreeService.setCurRoot(d.data.treeNode);
-          if (!this.optionList.options['suspendOpenClose']) {
+          if (!this.optionList.options[AstOption.ALWAYS_OPEN]) {
             d.data.isOpen = d.data.hierarchyChildren ? !d.data.isOpen : false;
             d.children = d.data.isOpen ? d.data.hierarchyChildren : undefined;
             this.update(event, d);

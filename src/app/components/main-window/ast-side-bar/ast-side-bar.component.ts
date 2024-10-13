@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { AstTreeService, OptionList, TreeNode } from '../../../services/ast-tree.service';
+import { AstOption, AstTreeService, OptionList, TreeNode } from '../../../services/ast-tree.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
@@ -18,6 +18,7 @@ export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges {
   @ViewChild('astSidebar') public astSidebar!: ElementRef<HTMLDivElement>;
   @ViewChild('code') public code!: ElementRef<HTMLDivElement>;
 
+  AstOption: typeof AstOption = AstOption;
   public curRoot: TreeNode;
   public optionList: OptionList;
 
@@ -77,8 +78,8 @@ export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges {
     }
   }
 
-  public toggleSuspendOpenClose(event: MouseEvent): void {
-    this.optionList.options['suspendOpenClose'] = !this.optionList.options['suspendOpenClose'];
+  public toggleAlwaysOpen(event: MouseEvent): void {
+    this.optionList.options[AstOption.ALWAYS_OPEN] = !this.optionList.options[AstOption.ALWAYS_OPEN];
     this.astTreeService.setOptionList(this.optionList);
   }
 }

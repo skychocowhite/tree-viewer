@@ -14,7 +14,10 @@ export class AstTreeService {
     this.curRoot = new BehaviorSubject<TreeNode>(new TreeNode());
 
     this.optionList = new BehaviorSubject<OptionList>(new OptionList());
-    this.optionList.getValue().addOption('suspendOpenClose');
+
+    for (let option of Object.values(AstOption)) {
+      this.optionList.getValue().addOption(option);
+    }
   }
 
   public createTreeByFile(file: File): void {
@@ -108,6 +111,10 @@ export class TreeNode {
     this.code = code;
     return this;
   }
+}
+
+export enum AstOption {
+  ALWAYS_OPEN = "AlwaysOpen",
 }
 
 export class OptionList {
