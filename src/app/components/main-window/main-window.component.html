@@ -56,11 +56,11 @@
 
             <ng-template #treeBlock>
                 <display-zoom [parentHeight]="sidenavContentOriginHeight"
-                    [parentWidth]="astSidebarToggle ? sidenavContentOriginWidth * (2/3) : sidenavContentOriginWidth"></display-zoom>
+                    [parentWidth]="astSidebarToggle ? sidenavContentOriginWidth * (1/2) : sidenavContentOriginWidth"></display-zoom>
 
                 <ng-container *ngIf="astSidebarToggle">
                     <ast-side-bar [parentHeight]="sidenavContentOriginHeight"
-                        [parentWidth]="sidenavContentOriginWidth * (1/3) - 20"></ast-side-bar>
+                        [parentWidth]="sidenavContentOriginWidth * (1/2) - 20"></ast-side-bar>
                 </ng-container>
             </ng-template>
 

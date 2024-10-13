@@ -41,6 +41,7 @@
 .sidenav-container {
     flex-grow: 1;
     background-color: #21262d;
+    scrollbar-color: #b1bac4 transparent;
 }
 
 :host::ng-deep.button-container svg {

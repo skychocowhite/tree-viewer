@@ -1,3 +1,4 @@
 .zoom-wrapper {
     overflow: auto;
+    scrollbar-color: #b1bac4 transparent;
 }
