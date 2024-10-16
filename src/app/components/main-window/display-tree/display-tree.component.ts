@@ -84,7 +84,7 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   private setAlwaysOpen(node: d3.HierarchyNode<D3TreeNodeWrapper>): void {
-    node.data.isOpen = node.data.hierarchyChildren ? true : false;
+    node.data.isOpen = !!node.data.hierarchyChildren;
     node.children = node.data.hierarchyChildren;
     if (node.children) {
       node.children.forEach((d) => this.setAlwaysOpen(d));
@@ -240,7 +240,7 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
       .attr("fill", "#484f58")
       .attr("fill-opacity", 1)
       .attr("stroke", (d: d3.HierarchyNode<D3TreeNodeWrapper>) => {
-        if (d.data.treeNode.id === this.astTreeService.getCurRootActualValue().id) {
+        if (d.data.treeNode.id === this.astTreeService.getCurRootValue().id) {
           return "#39FF14";
         }
         return "#555";

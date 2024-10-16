@@ -28,11 +28,7 @@ export class AstTreeService {
       reader.onload = (ev: ProgressEvent<FileReader>) => {
         try {
           let jsonData: AstJsonObj = JSON.parse(ev.target!.result as string);
-          let newTreeRoot: TreeNode = new TreeNode()
-            .setId(jsonData.id)
-            .setName(jsonData.nodeType)
-            .setCode(jsonData.code);
-          this.createTree(jsonData, newTreeRoot);
+          let newTreeRoot: TreeNode = this.createTree(jsonData);
           this.setTreeRoot(newTreeRoot);
           this.setCurRoot(newTreeRoot);
         } catch (err: any) {
@@ -43,27 +39,33 @@ export class AstTreeService {
     }
   }
 
-  private createTree(jsonData: AstJsonObj, curRoot: TreeNode) {
+  private createTree(jsonData: AstJsonObj): TreeNode {
+    let root: TreeNode = new TreeNode()
+      .setId(jsonData.id)
+      .setName(jsonData.nodeType)
+      .setCode(jsonData.code)
+      .setRange(jsonData.range);
+
     jsonData.children.forEach((childData: AstJsonObj) => {
-      curRoot.children.push(
-        new TreeNode()
-          .setId(childData.id)
-          .setName(childData.nodeType)
-          .setCode(childData.code)
-      );
-      this.createTree(childData, curRoot.children[curRoot.children.length - 1]);
+      root.children.push(this.createTree(childData));
     });
+
+    return root;
   }
 
   public getTreeRoot(): Observable<TreeNode> {
     return this.treeRoot.asObservable();
   }
 
+  public getTreeRootValue(): TreeNode {
+    return this.treeRoot.getValue();
+  }
+
   public getCurRoot(): Observable<TreeNode> {
     return this.curRoot.asObservable();
   }
 
-  public getCurRootActualValue(): TreeNode {
+  public getCurRootValue(): TreeNode {
     return this.curRoot.getValue();
   }
 
@@ -89,12 +91,22 @@ export class TreeNode {
   public name: string;
   public children: TreeNode[];
   public code: string;
+  public range: {
+    begin: { line: number, column: number },
+    end: { line: number, column: number },
+    lineCount: number
+  } | null;
 
   constructor() {
     this.id = "";
     this.name = "";
     this.children = [];
     this.code = "";
+    this.range = {
+      begin: { line: 0, column: 0 },
+      end: { line: 0, column: 0 },
+      lineCount: 0
+    };
   }
 
   public setId(id: string): this {
@@ -111,10 +123,16 @@ export class TreeNode {
     this.code = code;
     return this;
   }
+
+  public setRange(range: typeof this.range): this {
+    this.range = range;
+    return this;
+  }
 }
 
 export enum AstOption {
   ALWAYS_OPEN = "AlwaysOpen",
+  HIGHLIGHT_SELECTED = "HighlightedSelected"
 }
 
 export class OptionList {
@@ -140,5 +158,10 @@ interface AstJsonObj {
   id: string;
   nodeType: string;
   code: string;
+  range: {
+    begin: { line: number, column: number },
+    end: { line: number, column: number },
+    lineCount: number
+  } | null;
   children: AstJsonObj[];
 }

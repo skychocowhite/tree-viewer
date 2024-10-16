@@ -22,12 +22,16 @@
 
 .code-line-number-list {
     white-space: pre;
-    font-family: 'Consolas';
+    font-family: 'Consolas', sans-serif;
+}
+
+:host::ng-deep .hl-n {
+    color: #39FF14;
 }
 
 .code-line-list {
     white-space: pre;
-    font-family: 'Consolas';
+    font-family: 'Consolas', sans-serif;
 }
 
 .code-line {
@@ -36,9 +40,14 @@
     text-wrap: nowrap;
 }
 
+:host::ng-deep .hl-c {
+    color: #39FF14;
+}
+
 .checkbox-item {
     border: solid 1px gray;
     border-radius: 5px;
+    margin-bottom: 5px;
     cursor: pointer;
     transition: 90ms;
 }
@@ -47,10 +56,19 @@
     border: solid 1px white;
 }
 
-:host::ng-deep #suspend-open-close .mdc-label {
+:host::ng-deep .checkbox-item .mdc-label {
     color: white;
 }
 
-:host::ng-deep #suspend-open-close .mdc-checkbox__background {
+:host::ng-deep .checkbox-item .mdc-checkbox__background {
+    border-color: white;
+}
+
+:host::ng-deep .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background,
+:host::ng-deep .mdc-checkbox__native-control:enabled:indeterminate~.mdc-checkbox__background,
+:host::ng-deep .mdc-checkbox__native-control:focus:focus:checked~.mdc-checkbox__background,
+:host::ng-deep .mdc-checkbox__native-control:focus:focus:indeterminate~.mdc-checkbox__background,
+:host::ng-deep .mdc-checkbox__native-control:focus:focus:not(:checked)~.mdc-checkbox__background,
+:host::ng-deep .mdc-checkbox__native-control:focus:focus:not(:indeterminate)~.mdc-checkbox__background {
     border-color: white;
 }

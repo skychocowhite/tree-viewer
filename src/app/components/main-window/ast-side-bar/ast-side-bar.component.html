@@ -5,9 +5,16 @@
     </div>
 
     <div class="checkbox-container">
-        <div class="checkbox-item" (click)="toggleAlwaysOpen($event)" onkeypress="">
-            <mat-checkbox id="suspend-open-close" [checked]="optionList.options[AstOption.ALWAYS_OPEN]">Always
-                open</mat-checkbox>
+        <div class="checkbox-item" (click)="toggleAlwaysOpen()" onkeypress="">
+            <mat-checkbox id="always-open" [checked]="optionList.options[AstOption.ALWAYS_OPEN]">
+                Always open
+            </mat-checkbox>
+        </div>
+
+        <div class="checkbox-item" (click)="toggleHightlight()" onkeypress="">
+            <mat-checkbox id="hightlight-select" [checked]="optionList.options[AstOption.HIGHLIGHT_SELECTED]">
+                Highlight selected node
+            </mat-checkbox>
         </div>
     </div>
 </div>
