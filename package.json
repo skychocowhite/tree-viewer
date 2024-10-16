@@ -6,8 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:ssr:tree-viewer": "node dist/tree-viewer/server/server.mjs"
+    "test": "ng test"
   },
   "private": true,
   "dependencies": {
@@ -22,7 +21,6 @@
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@angular/platform-server": "^18.2.0",
     "@angular/router": "^18.2.0",
-    "@angular/ssr": "^18.2.5",
     "@types/d3": "^7.4.3",
     "d3": "^7.9.0",
     "express": "^4.18.2",
