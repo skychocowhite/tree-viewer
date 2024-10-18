@@ -10,10 +10,10 @@ import { AstTreeService } from './ast-tree.service';
 })
 export class FileService {
   private fileRoot: FileInterface;
-  private curFolderPath: BehaviorSubject<string[]>;
-  private displayMode: BehaviorSubject<DisplayMode>;  // false: folder list, true: tree display mode
+  private readonly curFolderPath: BehaviorSubject<string[]>;
+  private readonly displayMode: BehaviorSubject<DisplayMode>;  // false: folder list, true: tree display mode
 
-  constructor(private astTreeService: AstTreeService) {
+  constructor(private readonly astTreeService: AstTreeService) {
     this.fileRoot = new Directory("", "");
     this.curFolderPath = new BehaviorSubject<string[]>([]);
     this.displayMode = new BehaviorSubject<DisplayMode>(DisplayMode.NO_CONTENT);
@@ -43,7 +43,9 @@ export class FileService {
         })!;
       }
 
-      curFileRoot.addFile(new ConcreteFile(file.type, file.name, file));
+      if (file.name.endsWith("ast.json")) {
+        curFileRoot.addFile(new ConcreteFile(file.type, file.name, file));
+      }
     });
 
     // Update current path and mode
@@ -71,9 +73,10 @@ export class FileService {
 
     // Open json file
     if (subFile.isFile()) {
-      // TODO: add tree component
       this.astTreeService.createTreeByFile(subFile.getFile());
       this.setDisplayMode(DisplayMode.TREE);
+    } else if (subFile.getFileList().length === 0) {
+      this.setDisplayMode(DisplayMode.NO_CONTENT);
     }
   }
 

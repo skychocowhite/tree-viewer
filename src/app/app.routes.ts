@@ -7,9 +7,6 @@ export const routes: Routes = [
         component: MainWindowComponent
     },
     {
-        path: "/upload",
-    },
-    {
         path: "**",
         redirectTo: "",
         pathMatch: 'full'

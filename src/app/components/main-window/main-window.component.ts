@@ -87,7 +87,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   public onFileSelected(event: Event) {
     let inputElement: HTMLInputElement = event.target as HTMLInputElement;
 
-    if (inputElement.files) {
+    if (inputElement.files && inputElement.files.length > 0) {
       let fileArray: File[] = Array.from(inputElement.files);
 
       fileArray.sort((a: File, b: File) => {
