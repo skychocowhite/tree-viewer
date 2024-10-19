@@ -1,4 +1,7 @@
 <div #astSidebar class="ast-sidebar-container">
+    <span>Selected Node: {{curRoot.name}}</span>
+    <span>Line: {{curRoot.range?.begin?.line}} ~ {{curRoot.range?.end?.line}}</span>
+
     <div #codeContainer class="code-container">
         <div #codeNumber class="code-line-number-list"></div>
         <div #code class="code-line-list"></div>

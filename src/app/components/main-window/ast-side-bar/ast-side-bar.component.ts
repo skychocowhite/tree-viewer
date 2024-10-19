@@ -22,14 +22,18 @@ export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges {
   AstOption: typeof AstOption = AstOption;
   public optionList: OptionList;
 
+  public curRoot: TreeNode;
+
   constructor(
     private readonly astTreeService: AstTreeService
   ) {
     this.optionList = new OptionList();
+    this.curRoot = new TreeNode();
   }
 
   ngOnInit(): void {
     this.astTreeService.getCurRoot().subscribe((curRoot: TreeNode) => {
+      this.curRoot = curRoot;
       this.render();
     })
 
