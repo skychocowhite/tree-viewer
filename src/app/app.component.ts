@@ -3,6 +3,7 @@ import { RouterOutlet } from '@angular/router';
 import { MainWindowComponent } from './components/main-window/main-window.component';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ToolbarComponent } from "./components/toolbar/toolbar.component";
 
 @Component({
   selector: 'app-root',
@@ -10,6 +11,7 @@ import { DomSanitizer } from '@angular/platform-browser';
   imports: [
     RouterOutlet,
     MainWindowComponent,
+    ToolbarComponent
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'

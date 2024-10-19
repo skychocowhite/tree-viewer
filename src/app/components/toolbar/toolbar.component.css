@@ -1,0 +1,41 @@
+.header {
+    background-color: #0d1117;
+    color: white;
+}
+
+.header mat-icon {
+    color: white;
+}
+
+.header button {
+    transition: 90ms;
+}
+
+.header button:hover {
+    background-color: #6e7681;
+}
+
+.file-path {
+    height: 75%;
+    width: 100%;
+    margin: 0.5vw;
+    border-radius: 50px;
+    justify-content: center;
+    background-color: #0d1117;
+}
+
+:host::ng-deep.file-path .hover-span {
+    color: #388bfd;
+}
+
+:host::ng-deep.file-path .hover-span:hover {
+    color: white;
+}
+
+:host::ng-deep.button-container svg {
+    fill: white;
+}
+
+*:disabled {
+    opacity: 0.2;
+}

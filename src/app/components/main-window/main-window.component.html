@@ -1,34 +1,4 @@
 <div class="main-container">
-    <mat-toolbar class="header">
-        <div class="button-container">
-            <button mat-icon-button (click)="sidenav.toggle()">
-                <mat-icon fontIcon="menu"> </mat-icon>
-            </button>
-        </div>
-
-        <span>Tree Viewer</span>
-
-        <mat-card appearance="outlined" class="file-path">
-            <mat-card-content class="mat-body-large">
-                <app-breadcrumb></app-breadcrumb>
-            </mat-card-content>
-        </mat-card>
-
-        <div class="button-container">
-            <ng-container *ngIf="!astSidebarToggle">
-                <button mat-icon-button (click)="onAstSidebarToggle()" [disabled]="displayMode !== DisplayMode.TREE">
-                    <mat-icon svgIcon="left_panel_open"></mat-icon>
-                </button>
-            </ng-container>
-
-            <ng-container *ngIf="astSidebarToggle">
-                <button mat-icon-button (click)="onAstSidebarToggle()">
-                    <mat-icon svgIcon="close_square"></mat-icon>
-                </button>
-            </ng-container>
-        </div>
-    </mat-toolbar>
-
     <mat-sidenav-container class="sidenav-container">
         <mat-sidenav #sidenav mode="over" opened="false" class="sidenav">
             <mat-action-list>

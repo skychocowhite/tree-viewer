@@ -1,19 +1,13 @@
 import { AfterViewInit, Component, HostListener, OnInit, ViewChild } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenav, MatSidenavContent, MatSidenavModule } from '@angular/material/sidenav';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatDividerModule } from '@angular/material/divider';
-import { ToolBarService } from '../../services/tool-bar.service';
 import { DisplayMode, FileService } from '../../services/file.service';
-import { BreadcrumbComponent } from "../utils/breadcrumb/breadcrumb.component";
 import { CommonModule } from '@angular/common';
 import { DisplayFolderComponent } from "./display-folder/display-folder.component";
 import { DisplayNoContentComponent } from "./display-no-content/display-no-content.component";
 import { DisplayZoomComponent } from "./display-zoom/display-zoom.component";
 import { AstSideBarComponent } from "./ast-side-bar/ast-side-bar.component";
+import { ToolBarService } from '../../services/tool-bar.service';
 
 
 @Component({
@@ -21,22 +15,12 @@ import { AstSideBarComponent } from "./ast-side-bar/ast-side-bar.component";
   standalone: true,
   imports: [
     CommonModule,
-    MatButtonModule,
-    MatCardModule,
-    MatDividerModule,
-    MatIconModule,
     MatListModule,
     MatSidenavModule,
-    MatToolbarModule,
-    BreadcrumbComponent,
     DisplayFolderComponent,
     DisplayNoContentComponent,
     DisplayZoomComponent,
-    AstSideBarComponent
-  ],
-  providers: [
-    ToolBarService,
-    FileService,
+    AstSideBarComponent,
   ],
   templateUrl: './main-window.component.html',
   styleUrl: './main-window.component.css'
@@ -57,6 +41,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   public astSidebarToggle: boolean;
 
   constructor(
+    private readonly toolbarService: ToolBarService,
     private readonly fileService: FileService
   ) {
     this.displayMode = DisplayMode.NO_CONTENT;
@@ -64,13 +49,20 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.toolbarService.getSidenavToggle().subscribe((toggle: boolean) => {
+      console.log(toggle);
+      if (this.sidenav) {
+        this.sidenav.toggle();
+      }
+    });
+
+    this.toolbarService.getAstSidebarToggle().subscribe((toggle: boolean) => {
+      this.astSidebarToggle = toggle;
+    });
+
     this.fileService.getDisplayMode().subscribe((mode: DisplayMode) => {
       this.displayMode = mode;
-
-      if (this.displayMode !== DisplayMode.TREE) {
-        this.astSidebarToggle = false;
-      }
-    })
+    });
   }
 
   ngAfterViewInit(): void {
@@ -97,10 +89,6 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
       this.fileService.setByFiles(fileArray);
       this.sidenav.toggle();
     }
-  }
-
-  public onAstSidebarToggle(): void {
-    this.astSidebarToggle = !this.astSidebarToggle;
   }
 
   @HostListener('wheel', ['$event'])
