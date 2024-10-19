@@ -6,7 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { BreadcrumbComponent } from '../utils/breadcrumb/breadcrumb.component';
 import { ToolBarService } from '../../services/tool-bar.service';
-import { DisplayMode, FileService } from '../../services/file.service';
+import { FileService } from '../../services/file.service';
+import { DisplayMode } from '../../utils/DisplayMode';
 
 @Component({
   selector: 'app-toolbar',

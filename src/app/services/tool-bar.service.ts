@@ -14,7 +14,6 @@ export class ToolBarService {
   }
 
   public setSidenavToggle(toggle: boolean): void {
-    console.log("New sidebar toggle: " + toggle);
     this.sidenavToggle.next(toggle);
   }
 

@@ -1,13 +1,14 @@
 import { AfterViewInit, Component, HostListener, OnInit, ViewChild } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenav, MatSidenavContent, MatSidenavModule } from '@angular/material/sidenav';
-import { DisplayMode, FileService } from '../../services/file.service';
+import { FileService } from '../../services/file.service';
 import { CommonModule } from '@angular/common';
 import { DisplayFolderComponent } from "./display-folder/display-folder.component";
 import { DisplayNoContentComponent } from "./display-no-content/display-no-content.component";
 import { DisplayZoomComponent } from "./display-zoom/display-zoom.component";
 import { AstSideBarComponent } from "./ast-side-bar/ast-side-bar.component";
 import { ToolBarService } from '../../services/tool-bar.service';
+import { DisplayMode } from '../../utils/DisplayMode';
 
 
 @Component({
@@ -50,7 +51,6 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.toolbarService.getSidenavToggle().subscribe((toggle: boolean) => {
-      console.log(toggle);
       if (this.sidenav) {
         this.sidenav.toggle();
       }
@@ -76,6 +76,9 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
     inputElement.click();
   }
 
+  public onUploadAstFile(event: Event) {
+  }
+
   public onFileSelected(event: Event) {
     let inputElement: HTMLInputElement = event.target as HTMLInputElement;
 
@@ -87,7 +90,7 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
       });
 
       this.fileService.setByFiles(fileArray);
-      this.sidenav.toggle();
+      this.sidenav.close();
     }
   }
 

@@ -5,8 +5,12 @@
                 <button mat-list-item (click)="onOpenFolderClick($event)">
                     Open Folder
                 </button>
-                <input type="file" webkitdirectory directory hidden id="fileInput" (change)="onFileSelected($event)">
+
+                <button mat-list-item (click)="onUploadAstFile($event)">
+                    Upload AST File
+                </button>
             </mat-action-list>
+            <input type="file" webkitdirectory directory hidden id="fileInput" (change)="onFileSelected($event)">
         </mat-sidenav>
 
         <mat-sidenav-content #sidenavContent class="sidenav-content" [ngClass]="{

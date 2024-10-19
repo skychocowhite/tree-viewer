@@ -4,6 +4,7 @@ import { ConcreteFile } from '../files/ConcreteFile';
 import { Directory } from '../files/Directory';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AstTreeService } from './ast-tree.service';
+import { DisplayMode } from '../utils/DisplayMode';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,11 @@ import { AstTreeService } from './ast-tree.service';
 export class FileService {
   private fileRoot: FileInterface;
   private readonly curFolderPath: BehaviorSubject<string[]>;
-  private readonly displayMode: BehaviorSubject<DisplayMode>;  // false: folder list, true: tree display mode
+  private readonly displayMode: BehaviorSubject<DisplayMode>;
 
-  constructor(private readonly astTreeService: AstTreeService) {
+  constructor(
+    private readonly astTreeService: AstTreeService,
+  ) {
     this.fileRoot = new Directory("", "");
     this.curFolderPath = new BehaviorSubject<string[]>([]);
     this.displayMode = new BehaviorSubject<DisplayMode>(DisplayMode.NO_CONTENT);
@@ -112,8 +115,3 @@ export class FileService {
   }
 }
 
-export enum DisplayMode {
-  NO_CONTENT = "NO_CONTENT",
-  FOLDER = "FOLDER",
-  TREE = "TREE"
-}
