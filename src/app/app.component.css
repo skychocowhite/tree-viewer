@@ -6,10 +6,12 @@ body {
 
 .app-container {
     height: 100vh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
 }
 
 :host::ng-deep app-main-window {
+    overflow: auto;
     flex-grow: 1;
 }

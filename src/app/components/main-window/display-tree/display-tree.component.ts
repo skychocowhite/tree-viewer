@@ -104,9 +104,6 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
     this.gLink = this.svg.append("g")
       .attr("class", "gLink")
       .attr("fill", "none")
-      .attr("stroke", "#555")
-      .attr("stroke-width", 1.5)
-      .attr("stroke-opacity", 0.4);
 
     this.gNode = this.svg.append("g")
       .attr("class", "gNode")
@@ -153,8 +150,7 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
 
     this.height = right.x! - left.x! + this.rectHeight + this.margin.top + this.margin.bottom;
     this.width = this.margin.left + this.margin.right + this.getTreeHeight(nodes[nodes.length - 1], this.getRectWidth(nodes[nodes.length - 1].data.treeNode.name));
-    this.svg.transition()
-      .duration(250)
+    this.svg
       .attr("height", this.height)
       .attr("width", this.width)
       .attr("viewBox", `-${this.margin.left} ${left.x! - this.rectHeight - this.margin.top} ${this.width} ${this.height}`);
@@ -204,12 +200,6 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
     let nodeEnter: d3.Selection<SVGGElement, d3.HierarchyNode<D3TreeNodeWrapper>, SVGGElement, undefined>
       = node.enter().append("g")
         .attr("class", "node")
-        .attr("transform", (d: d3.HierarchyNode<D3TreeNodeWrapper>) => {
-          if (d.parent) {
-            return `translate(${d.parent.data.preY},${d.parent.data.preX})`;
-          }
-          return `translate(0, 0)`;
-        })
         .on("click", (event: MouseEvent, d: d3.HierarchyNode<D3TreeNodeWrapper>) => {
           this.astTreeService.setCurRoot(d.data.treeNode);
           if (!this.optionList.options[AstOption.ALWAYS_OPEN]) {
@@ -220,22 +210,23 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
         });
 
     nodeEnter.append("rect")
+      .attr("x", (d) => d.y!)
+      .attr("y", (d) => d.x!);
     nodeEnter.append("text")
+      .attr("y", (d) => d.x!);
 
     // Update: transition nodes to their new position
-    let nodeUpdate: d3.Transition<SVGGElement, d3.HierarchyNode<D3TreeNodeWrapper>, SVGGElement, undefined>
+    let nodeUpdate: d3.Selection<SVGGElement, d3.HierarchyNode<D3TreeNodeWrapper>, SVGGElement, undefined>
       = node.merge(nodeEnter)
-        .transition()
-        .duration(250)
-        .attr("transform", (d: d3.HierarchyNode<D3TreeNodeWrapper>) => `translate(${d.y},${d.x})`)
         .attr("fill-opacity", 1)
-        .attr("stroke-opacity", 1);
+        .attr("stroke-opacity", 1)
+        .attr("will-change", "transform");
 
     nodeUpdate.select("rect")
       .attr("width", (d) => this.getRectWidth(d.data.treeNode.name))
       .attr("height", this.rectHeight)
-      .attr("x", (d) => -(this.getRectWidth(d.data.treeNode.name) / 2))
-      .attr("y", -this.rectHeight)
+      .attr("x", (d) => d.y! - (this.getRectWidth(d.data.treeNode.name) / 2))
+      .attr("y", (d) => d.x! - this.rectHeight)
       .attr("rx", 18)
       .attr("fill", "#484f58")
       .attr("fill-opacity", 1)
@@ -251,19 +242,23 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
       .text(d => d.data.treeNode.name)
       .attr("font-family", "Consolas")
       .attr("font-size", "15px")
-      .attr("y", -this.rectHeight / 2)
+      .attr("x", (d) => d.y!)
+      .attr("y", (d) => d.x! - this.rectHeight / 2)
       .attr("dy", "0.31em")
       .attr("fill", "white")
       .attr("text-anchor", "middle")
       .attr("stroke-linejoin", "round")
       .attr("paint-order", "stroke");
 
+    let duration: number = 1;
+    let timer: d3.Timer = d3.timer((elapsed) => {
+      this.animateNodeUpdate(nodeUpdate, elapsed, duration);
+      if (elapsed > duration + 50) timer.stop();
+    })
+
     // Exit: transition exiting nodesto the parent's new position
     node.exit<d3.HierarchyNode<D3TreeNodeWrapper>>()
-      .transition()
-      .duration(250)
       .remove()
-      .attr("transform", (d: d3.HierarchyNode<D3TreeNodeWrapper>) => `translate(${sourceData.y},${sourceData.x})`)
       .attr("fill-opacity", 0)
       .attr("stoke-opacity", 0);
   }
@@ -281,8 +276,6 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
 
     // Update: transition links to their new position
     link.merge(linkEnter)
-      .transition()
-      .duration(250)
       .attr("d", (d: d3.HierarchyLink<D3TreeNodeWrapper>) =>
         `M${d.source.y},${d.source.x} V${d.target.x! - this.rectHeight / 2} H${d.target.y! - this.getRectWidth(d.target.data.treeNode.name) / 2}`)
       .attr("fill-opacity", 1)
@@ -292,8 +285,6 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
 
     // Exit: transition existing links to the parent's new position
     link.exit<d3.HierarchyLink<D3TreeNodeWrapper>>()
-      .transition()
-      .duration(250)
       .remove()
       .attr("stroke-opacity", 0);
   }
@@ -327,11 +318,24 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
   public getTreeContainer(): ElementRef<HTMLDivElement> {
     return this.treeContainer;
   }
+
+  private animateNodeUpdate(
+    selection: d3.Selection<SVGGElement, d3.HierarchyNode<D3TreeNodeWrapper>, SVGGElement, undefined>,
+    elapsed: number,
+    duration: number
+  ) {
+    // const process: number = Math.min(elapsed / duration, 1);
+    // selection.attr("transform", (d) => {
+    //   const newX = d.data.preX + (d.x! - d.data.preX) * process;
+    //   const newY = d.data.preY + (d.y! - d.data.preY) * process;
+    //   return `translate(${newY},${newX})`;
+    // });
+  }
 }
 
 
 // Class to wrap original AST tree data
-class D3TreeNodeWrapper {
+export class D3TreeNodeWrapper {
   public id: number;                     // Index in the hierarcy structure, using BFS ordering
   public isOpen: boolean;                // Flag to open nodes
   public treeNode: TreeNode;             // Original AST data

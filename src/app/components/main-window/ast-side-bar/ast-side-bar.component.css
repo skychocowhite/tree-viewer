@@ -2,8 +2,12 @@
     height: 100%;
     color: white;
     background-color: #21262d;
-    padding: 10px;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
     border-left: 1px solid gray;
+    overflow-x: hidden;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     row-gap: 10px;
