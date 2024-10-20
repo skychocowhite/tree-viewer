@@ -73,8 +73,8 @@ export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges {
 
   private renderCode(renderNode: TreeNode): void {
     if (this.code) {
-      this.code.nativeElement.innerHTML = "";
-      this.codeNumber.nativeElement.innerHTML = "";
+      this.code.nativeElement.textContent = "";
+      this.codeNumber.nativeElement.textContent = "";
 
       renderNode.code.split('\n').forEach((line: string, lineIndex: number) => {
         this.handleLineNum(line, lineIndex + 1);
@@ -97,59 +97,59 @@ export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges {
 
       if (range.begin.line < lineNum && lineNum < range.end.line) {
         codeLineSpanElement.classList.add("hl-c");
-        codeLineSpanElement.innerHTML = " " + line;
+        codeLineSpanElement.textContent = " " + line;
         spanElements.push(codeLineSpanElement);
       } else if (lineNum === range.begin.line && range.lineCount === 1) {
         // head non-highlighted part
-        codeLineSpanElement.innerHTML = " " + line.substring(0, range.begin.column - 1);
+        codeLineSpanElement.textContent = " " + line.substring(0, range.begin.column - 1);
         spanElements.push(codeLineSpanElement);
 
         // middle highlighted part
         codeLineSpanElement = document.createElement("span");
         codeLineSpanElement.classList.add("code-line", "hl-c");
-        codeLineSpanElement.innerHTML = line.substring(range.begin.column - 1, range.end.column);
+        codeLineSpanElement.textContent = line.substring(range.begin.column - 1, range.end.column);
         spanElements.push(codeLineSpanElement);
 
         // tail non-highlighted part
         codeLineSpanElement = document.createElement("span");
         codeLineSpanElement.classList.add("code-line");
-        codeLineSpanElement.innerHTML = line.substring(range.end.column);
+        codeLineSpanElement.textContent = line.substring(range.end.column);
         spanElements.push(codeLineSpanElement);
       } else if (lineNum === range.begin.line) {
         // head non-highlighted part
-        codeLineSpanElement.innerHTML = " " + line.substring(0, range.begin.column - 1);
+        codeLineSpanElement.textContent = " " + line.substring(0, range.begin.column - 1);
         spanElements.push(codeLineSpanElement);
 
         // middle highlighted part
         codeLineSpanElement = document.createElement("span");
         codeLineSpanElement.classList.add("code-line", "hl-c");
-        codeLineSpanElement.innerHTML = line.substring(range.begin.column - 1);
+        codeLineSpanElement.textContent = line.substring(range.begin.column - 1);
         spanElements.push(codeLineSpanElement);
       } else if (lineNum === range.end.line) {
         // middle highlighted part
         codeLineSpanElement = document.createElement("span");
         codeLineSpanElement.classList.add("code-line", "hl-c");
-        codeLineSpanElement.innerHTML = " " + line.substring(0, range.end.column);
+        codeLineSpanElement.textContent = " " + line.substring(0, range.end.column);
         spanElements.push(codeLineSpanElement);
 
         // tail non-highlighted part
         codeLineSpanElement = document.createElement("span");
         codeLineSpanElement.classList.add("code-line");
-        codeLineSpanElement.innerHTML = line.substring(range.end.column);
+        codeLineSpanElement.textContent = line.substring(range.end.column);
         spanElements.push(codeLineSpanElement);
       } else {
-        codeLineSpanElement.innerHTML = " " + line;
+        codeLineSpanElement.textContent = " " + line;
         spanElements.push(codeLineSpanElement);
       }
     } else {
       codeLineSpanElement = document.createElement("span");
       codeLineSpanElement.classList.add("code-line");
-      codeLineSpanElement.innerHTML = " " + line;
+      codeLineSpanElement.textContent = " " + line;
 
       // UnknownType node
       if (!this.optionList.options[AstOption.HIGHLIGHT_SELECTED] &&
         this.astTreeService.getCurRootValue().name === "UnknownType") {
-        codeLineSpanElement.innerHTML = "Unknown Type";
+        codeLineSpanElement.textContent = "Unknown Type";
       }
       spanElements.push(codeLineSpanElement);
     }
@@ -176,14 +176,14 @@ export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges {
 
     let numberStr: string = (lineNum).toString();
     for (let i: number = 4 - numberStr.length; i > 0; --i) {
-      codeNumSpanElement.innerHTML += " ";
+      codeNumSpanElement.textContent += " ";
     }
-    codeNumSpanElement.innerHTML += numberStr;
+    codeNumSpanElement.textContent += numberStr;
 
     // UnknownType Node
     if (!this.optionList.options[AstOption.HIGHLIGHT_SELECTED] &&
       this.astTreeService.getCurRootValue().name === "UnknownType") {
-      codeNumSpanElement.innerHTML = "XXXX";
+      codeNumSpanElement.textContent = "XXXX";
     }
 
     codeNumDivElement.appendChild(codeNumSpanElement);
