@@ -1,6 +1,7 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { AstOption, AstTreeService, OptionList, TreeNode } from '../../../services/ast-tree.service';
 import * as d3 from 'd3';
+import { skip, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'display-tree',
@@ -9,13 +10,14 @@ import * as d3 from 'd3';
   templateUrl: './display-tree.component.html',
   styleUrl: './display-tree.component.css'
 })
-export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
+export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
   @Input() public scale: number = 1;
 
   @Output() svgSizeChange: EventEmitter<{ width: number, height: number }> = new EventEmitter();
 
   @ViewChild('treeContainer') private readonly treeContainer!: ElementRef<HTMLDivElement>;
 
+  private readonly destroy$: Subject<void> = new Subject();
 
   // Tree layout and hierarchy structure
   private hierarchyRoot!: d3.HierarchyNode<D3TreeNodeWrapper>;
@@ -39,7 +41,9 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
   private data: D3TreeNodeWrapper;
   private optionList: OptionList;
 
-  constructor(private readonly astTreeService: AstTreeService) {
+  constructor(
+    private readonly astTreeService: AstTreeService
+  ) {
     this.data = new D3TreeNodeWrapper(new TreeNode());
     this.optionList = new OptionList();
   }
@@ -47,28 +51,41 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
   ngOnInit(): void {
     this.createSvg();
     this.createTree();
-    this.update(null, this.hierarchyRoot);
 
     // Update AST tree data
-    this.astTreeService.getTreeRoot().subscribe((treeNode: TreeNode) => {
-      this.data = new D3TreeNodeWrapper(treeNode);
-      this.createTree();
-      this.update(null, this.hierarchyRoot);
-    });
+    this.astTreeService.getTreeRoot()
+      .pipe(
+        skip(1),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((treeNode: TreeNode) => {
+        this.data = new D3TreeNodeWrapper(treeNode);
+        this.createTree();
+      });
 
-    this.astTreeService.getCurRoot().subscribe((curRoot: TreeNode) => {
-      this.update(null, this.hierarchyRoot);
-    });
+    this.astTreeService.getCurRoot()
+      .pipe(
+        skip(1),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((curRoot: TreeNode) => {
+        this.update(null, this.hierarchyRoot);
+      });
 
-    this.astTreeService.getOptionList().subscribe((optionList: OptionList) => {
-      this.optionList = optionList;
+    this.astTreeService.getOptionList()
+      .pipe(
+        skip(1),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((optionList: OptionList) => {
+        this.optionList = optionList;
 
-      if (optionList.options[AstOption.ALWAYS_OPEN]) {
-        this.setAlwaysOpen(this.hierarchyRoot);
-      }
+        if (optionList.options[AstOption.ALWAYS_OPEN]) {
+          this.setAlwaysOpen(this.hierarchyRoot);
+        }
 
-      this.update(null, this.hierarchyRoot);
-    });
+        this.update(null, this.hierarchyRoot);
+      });
   }
 
   // The container should insert the svg container after both tags are rendered
@@ -81,6 +98,11 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
     if (this.svg && changes['scale']) {
       this.svg.attr("transform", `scale(${this.scale})`);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private setAlwaysOpen(node: d3.HierarchyNode<D3TreeNodeWrapper>): void {
@@ -190,7 +212,7 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   // Update nodes when data changed
-  private updateNodes(nodes: d3.HierarchyNode<D3TreeNodeWrapper>[], sourceData: d3.HierarchyNode<D3TreeNodeWrapper>): void {
+  private async updateNodes(nodes: d3.HierarchyNode<D3TreeNodeWrapper>[], sourceData: d3.HierarchyNode<D3TreeNodeWrapper>): Promise<void> {
     // Insert new nodes
     let node: d3.Selection<SVGGElement, d3.HierarchyNode<D3TreeNodeWrapper>, SVGGElement, undefined>
       = this.gNode.selectAll<SVGGElement, d3.HierarchyNode<D3TreeNodeWrapper>>("g.node")
@@ -264,7 +286,7 @@ export class DisplayTreeComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   // Update links when data changed
-  private updateLinks(links: d3.HierarchyLink<D3TreeNodeWrapper>[], sourceData: d3.HierarchyNode<D3TreeNodeWrapper>): void {
+  private async updateLinks(links: d3.HierarchyLink<D3TreeNodeWrapper>[], sourceData: d3.HierarchyNode<D3TreeNodeWrapper>): Promise<void> {
     let link: d3.Selection<SVGPathElement, d3.HierarchyLink<D3TreeNodeWrapper>, SVGGElement, undefined>
       = this.gLink.selectAll<SVGPathElement, d3.HierarchyLink<D3TreeNodeWrapper>>("path.link")
         .data(links, (d: d3.HierarchyLink<D3TreeNodeWrapper>) => d.target.data.id);

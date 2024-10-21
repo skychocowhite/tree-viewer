@@ -1,13 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, HostListener, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { DisplayTreeComponent } from "../display-tree/display-tree.component";
+import { DisplayTreePixijsComponent } from "../display-tree-pixijs/display-tree-pixijs.component";
 
 @Component({
   selector: 'display-zoom',
   standalone: true,
   imports: [
     CommonModule,
-    DisplayTreeComponent
+    DisplayTreeComponent,
+    DisplayTreePixijsComponent
   ],
   templateUrl: './display-zoom.component.html',
   styleUrl: './display-zoom.component.css'

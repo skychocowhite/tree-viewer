@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,6 +8,7 @@ import { BreadcrumbComponent } from '../utils/breadcrumb/breadcrumb.component';
 import { ToolBarService } from '../../services/tool-bar.service';
 import { FileService } from '../../services/file.service';
 import { DisplayMode } from '../../utils/DisplayMode';
+import { skip, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-toolbar',
@@ -23,7 +24,9 @@ import { DisplayMode } from '../../utils/DisplayMode';
   templateUrl: './toolbar.component.html',
   styleUrl: './toolbar.component.css'
 })
-export class ToolbarComponent implements OnInit {
+export class ToolbarComponent implements OnInit, OnDestroy {
+  private readonly destroy$: Subject<void> = new Subject();
+
   DisplayMode: typeof DisplayMode = DisplayMode;
   public displayMode: DisplayMode;
   public astSidebarToggle: boolean;
@@ -37,16 +40,31 @@ export class ToolbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.toolbarService.getAstSidebarToggle().subscribe((toggle: boolean) => {
-      this.astSidebarToggle = toggle;
-    });
+    this.toolbarService.getAstSidebarToggle()
+      .pipe(
+        skip(1),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((toggle: boolean) => {
+        this.astSidebarToggle = toggle;
+      });
 
-    this.fileService.getDisplayMode().subscribe((mode: DisplayMode) => {
-      this.displayMode = mode;
-      if (mode !== DisplayMode.TREE) {
-        this.toolbarService.setAstSidebarToggle(false);
-      }
-    });
+    this.fileService.getDisplayMode()
+      .pipe(
+        skip(1),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((mode: DisplayMode) => {
+        this.displayMode = mode;
+        if (mode !== DisplayMode.TREE) {
+          this.toolbarService.setAstSidebarToggle(false);
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   public onSidenavToggle(): void {

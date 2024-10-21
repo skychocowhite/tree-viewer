@@ -1,6 +1,7 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { AstOption, AstTreeService, OptionList, TreeNode } from '../../../services/ast-tree.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { skip, Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'ast-side-bar',
@@ -11,13 +12,15 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
   templateUrl: './ast-side-bar.component.html',
   styleUrl: './ast-side-bar.component.css'
 })
-export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges {
+export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
   @Input() public parentHeight!: number;
   @Input() public parentWidth!: number;
 
   @ViewChild('astSidebar') public astSidebar!: ElementRef<HTMLDivElement>;
   @ViewChild('code') public code!: ElementRef<HTMLDivElement>;
   @ViewChild('codeNumber') public codeNumber!: ElementRef<HTMLDivElement>;
+
+  private readonly destroy$: Subject<void> = new Subject();
 
   AstOption: typeof AstOption = AstOption;
   public optionList: OptionList;
@@ -32,15 +35,25 @@ export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.astTreeService.getCurRoot().subscribe((curRoot: TreeNode) => {
-      this.curRoot = curRoot;
-      this.render();
-    })
+    this.astTreeService.getCurRoot()
+      .pipe(
+        skip(1),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((curRoot: TreeNode) => {
+        this.curRoot = curRoot;
+        this.render();
+      })
 
-    this.astTreeService.getOptionList().subscribe((optionList: OptionList) => {
-      this.optionList = optionList;
-      this.render();
-    });
+    this.astTreeService.getOptionList()
+      .pipe(
+        skip(1),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((optionList: OptionList) => {
+        this.optionList = optionList;
+        this.render();
+      });
   }
 
   ngAfterViewInit(): void {
@@ -61,6 +74,11 @@ export class AstSideBarComponent implements OnInit, AfterViewInit, OnChanges {
     if (this.astSidebar && changes['parentWidth']) {
       this.astSidebar.nativeElement.style.width = this.parentWidth + 'px';
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private render(): void {

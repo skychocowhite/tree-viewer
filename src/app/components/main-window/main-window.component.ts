@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatListModule } from '@angular/material/list';
 import { MatSidenav, MatSidenavContent, MatSidenavModule } from '@angular/material/sidenav';
 import { FileService } from '../../services/file.service';
@@ -9,6 +9,7 @@ import { DisplayZoomComponent } from "./display-zoom/display-zoom.component";
 import { AstSideBarComponent } from "./ast-side-bar/ast-side-bar.component";
 import { ToolBarService } from '../../services/tool-bar.service';
 import { DisplayMode } from '../../utils/DisplayMode';
+import { skip, Subject, takeUntil } from 'rxjs';
 
 
 @Component({
@@ -26,7 +27,9 @@ import { DisplayMode } from '../../utils/DisplayMode';
   templateUrl: './main-window.component.html',
   styleUrl: './main-window.component.css'
 })
-export class MainWindowComponent implements OnInit, AfterViewInit {
+export class MainWindowComponent implements OnInit, AfterViewInit, OnDestroy {
+  private readonly destory$: Subject<void> = new Subject();
+
   // Current mode of display, decide which component to show
   DisplayMode: typeof DisplayMode = DisplayMode;
   public displayMode: DisplayMode;
@@ -50,24 +53,44 @@ export class MainWindowComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.toolbarService.getSidenavToggle().subscribe((toggle: boolean) => {
-      if (this.sidenav) {
-        this.sidenav.toggle();
-      }
-    });
+    this.toolbarService.getSidenavToggle()
+      .pipe(
+        skip(1),
+        takeUntil(this.destory$)
+      )
+      .subscribe((toggle: boolean) => {
+        if (this.sidenav) {
+          this.sidenav.toggle();
+        }
+      });
 
-    this.toolbarService.getAstSidebarToggle().subscribe((toggle: boolean) => {
-      this.astSidebarToggle = toggle;
-    });
+    this.toolbarService.getAstSidebarToggle()
+      .pipe(
+        skip(1),
+        takeUntil(this.destory$)
+      )
+      .subscribe((toggle: boolean) => {
+        this.astSidebarToggle = toggle;
+      });
 
-    this.fileService.getDisplayMode().subscribe((mode: DisplayMode) => {
-      this.displayMode = mode;
-    });
+    this.fileService.getDisplayMode()
+      .pipe(
+        skip(1),
+        takeUntil(this.destory$)
+      )
+      .subscribe((mode: DisplayMode) => {
+        this.displayMode = mode;
+      });
   }
 
   ngAfterViewInit(): void {
     this.sidenavContentOriginWidth = this.sidenavContent.getElementRef().nativeElement.scrollWidth;
     this.sidenavContentOriginHeight = this.sidenavContent.getElementRef().nativeElement.scrollHeight;
+  }
+
+  ngOnDestroy(): void {
+    this.destory$.next();
+    this.destory$.complete();
   }
 
   public onOpenFolderClick(event: Event) {

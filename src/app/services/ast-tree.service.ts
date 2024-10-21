@@ -73,6 +73,10 @@ export class AstTreeService {
     return this.optionList.asObservable();
   }
 
+  public getOptionListValue(): OptionList {
+    return this.optionList.getValue();
+  }
+
   public setTreeRoot(treeRoot: TreeNode): void {
     this.treeRoot.next(treeRoot);
   }
